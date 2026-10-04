@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recipe Cart TikTok Maker</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf6ee;--ink:#241c12;--mute:#7a6f5c;--line:#e4d8c3;--ac:#d9631e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1c160e;--ink:#fbf6ee;--mute:#b3a58c;--line:#3a2f20}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 'Bricolage Grotesque',system-ui,sans-serif;max-width:600px;margin-inline:auto;padding:20px}
+h1{font-size:2rem;line-height:1.05;margin:6px 0;font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 16px}
+button{font:inherit;cursor:pointer}
+.bar{display:flex;gap:8px;margin-bottom:14px}
+.b{flex:1;min-height:46px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font-weight:600}
+.b.p{background:var(--ac);border-color:var(--ac);color:#fff}
+.card{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.tag{font-size:.8rem;font-weight:600;color:var(--ac)}
+.hook{font-weight:800;font-size:1.2rem;margin:2px 0 10px}
+.slides{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.slides img{width:100%;border-radius:8px;display:block}
+.slides a{display:block;text-align:center;font-size:.85rem;color:var(--ac);font-weight:600;margin-top:2px}
+textarea{width:100%;min-height:96px;margin-top:12px;font:inherit;font-size:16px;padding:10px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--ink)}
+.hint{color:var(--mute);font-size:.85rem}
+.shot{display:flex;justify-content:space-between;align-items:center;min-height:44px;border-bottom:1px solid var(--line);cursor:pointer}.shot b{color:var(--ac)}summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px}.ph{display:block;text-align:center;font-size:.85rem;color:var(--mute);font-weight:600;cursor:pointer;margin-top:2px}
+.two{display:flex;gap:8px}.two .b{flex:1}.b:disabled{opacity:.6}
+:focus-visible{outline:3px solid #f2c230;outline-offset:2px}
+</style></head><body>
+<h1>Recipe Cart TikTok maker</h1>
+<p class="sub">A week of photo posts built to earn follows: value first, a question post, and a follow call to action on the last slide. Make slides, save them, post.</p>
+<div class="bar"><button class="b p" id="neu">New week of ideas</button><button class="b" id="shuf">Reshuffle</button></div>
+<p class="hint" id="note">Tip: post one a day. Photos are optional, every post works with the text and app screens alone. Save the slides, upload them to TikTok as a photo post, and paste the caption.</p>
+<p class="hint" id="ver"></p><p class="hint" id="used"></p><p class="hint"><button class="b" id="clr" style="min-height:36px;flex:none;padding:0 12px">Clear history</button></p>
+<div id="list"></div>
+<h2 style="font-size:1.2rem;margin:24px 0 8px">Saved ideas</h2>
+<div id="saved"></div>
+
+<script>
+// ---- Brand (from the Recipe Cart app) ----
+const B={bg:'#faf6ee',ink:'#251c14',mute:'#7a6f5c',ac:'#db621f',card:'#efe6d5',deep:'#33271b'};
+const F="'Bricolage Grotesque',system-ui,sans-serif",W=1080,H=1920;
+// ---- Seeded random so a week stays stable until you reshuffle ----
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const wk=()=>{const d=new Date();return Math.floor(d/6048e5)};
+let seed=wk()*7+1;
+// ---- What the app knows ----
+const FOODS=["chicken breast","Greek yogurt","eggs","black beans","lean ground beef","cottage cheese","tuna","rice","oats","peanut butter","lentils"];
+const TAGS='#mealprep #highproteinmeals #proteingoals #groceryhacks #mealprepideas #budgetgroceries #recipecart';
+const DISC='Estimates, not medical advice. Prices can differ at checkout. Not affiliated with Kroger.';
+const ENDS=[['Follow for weekly high protein meals','Free app in my bio'],['Follow so you never run out of protein meals','Try the free app in my bio'],['New protein meal every week','Follow, then try the app in my bio']];
+// Each post type: p=name, h=hook lines, s=3 slide slots with 3 variants each. {P} {C} {F} get filled in.
+const PL=[
+{p:'Protein meal',c:'New high protein meal every week. Follow so you do not miss one.',h:["{G}g of protein in one bowl: {M}","High protein meal: {M}","{M}: {G}g of protein","A {G}g protein meal with 4 ingredients","Easy high protein meal prep: {M}","{K} calories, {G}g protein: {M}"],
+ s:[[["What you need","{I}"],["Grocery list","{I}"],["Only a few ingredients","{I}"]],
+    [["{G}g of protein","About {K} calories"],["{G}g protein in one meal","Roughly {K} calories"],["The numbers","{G}g protein, {K} calories"]],
+    [["Fits a weekly plan","Recipe Cart builds the week from foods you pick"],["Meal prep friendly","Make it once, eat it all week"],["Want more like this?","Recipe Cart plans a week of meals for you"]]]},
+{p:'Question',c:'Tell me yours in the comments. I read every one.',e:["Drop yours below","Follow for weekly protein meals"],h:["Meal prep folks, what is your favorite protein meal?","What is your go to meal prep protein?","Be honest: what do you eat to hit your protein?","What is your cheapest high protein meal?","Meal prep people: what is on your plate this week?","What high protein meal do you never get tired of?"],
+ s:[[["Mine: {M}","{G}g of protein"],["I keep making {M}","{G}g protein, {K} calories"],["Mine this week","{M}, {G}g of protein"]],
+    [["What is yours?","Tell me in the comments"],["Drop your meal below","I read every comment"],["Your turn","Name the meal, I will check it out"]],
+    [["Follow for the best ones","I will share my favorites"],["Steal good ideas","Follow to see the best answers"],["Save this for later","Your meal prep list starts here"]]]},
+{p:'Budget problem',c:'Estimated prices from Kroger, they can differ at checkout.',h:["Can't hit {P}g protein without blowing your budget?","Hit {P}g of protein without a huge grocery bill","Protein goal vs grocery budget: here is the fix","Same {P}g of protein, a lower grocery bill","Stop overpaying for your protein goal","The cheapest way to hit {P}g of protein"],
+ s:[[["Protein adds up fast","Especially if you guess"],["Guessing gets expensive","Wrong foods, wrong amounts"],["Hard to plan by hand","Prices, protein, and portions"]],
+    [["Set your goal","{P}g of protein a week"],["Tell it your target","{P}g protein, up to 8 foods"],["Pick your foods","It plans the cheapest way"]],
+    [["See the price gap","Cheapest vs Balanced, side by side"],["Same goal, lower bill","When there is a gap, it shows"],["Pick your plan","Then send it to your Kroger cart"]]]},
+{p:'Goal math',h:["Hit {P}g of protein this week with 4 foods","How I plan {P}g of protein without counting daily","{P}g of protein a week: the 4 foods I would pick","Stop guessing protein. Set {P}g for the week.","Protein goal {P}g? Pick foods, not macros","My {P}g protein week starts with this list"],
+ s:[[["Weekly goal","Not daily guilt"],["Think in weeks","One off day will not wreck it"],["Start with a number","Weekly protein in grams"]],
+    [["Pick your foods","{F}"],["Tap food cards","Chicken, yogurt, eggs, beans"],["Choose up to 8 foods","The plan splits the goal"]],
+    [["A meter checks your picks","See if you can reach the goal"],["Recipe Cart splits it","across your picks"],["No one food carries it","The plan spreads it out"]]]},
+{p:'Goal to cart',h:["Protein goal to Kroger cart in four taps","Set a goal. Fill your cart.","From goal to groceries in one flow","I stopped guessing what to buy at Kroger","Pick a goal, then shop it","Your protein goal, already in the cart"],
+ s:[[["Choose","I am shopping at Kroger"],["Start with the store path","Kroger prices for your goal"],["Pick the Kroger path","Find the cheapest way to hit it"]],
+    [["Set a goal, tap your foods","Protein, calories, or both"],["Pick up to 8 foods","The plan fits your goal"],["Tell it what you eat","Then let it do the math"]],
+    [["Add the full plan to your cart","One tap"],["See the cost, then send it","Straight to your Kroger cart"],["Know the total before you shop","Then add it to your cart"]]]},
+{p:'Same meal fatigue',h:["Meal prep without eating the same thing all week","Sick of chicken and rice by Wednesday?","Why meal prep gets boring, and the fix","Same meal four days in a row? Try this","Meal prep, but not the same plate","Bored of your meal prep already?"],
+ s:[[["You prep once","Chicken, rice, beans, yogurt"],["Sunday you prep","Wednesday you are over it"],["Same foods all week","That is the problem"]],
+    [["Recipe Cart makes a week of meals","from the exact foods you bought"],["Meals built from your foods","No extra shopping"],["A new idea for every day","using your own plan"]],
+    [["Do not like a meal?","Swap it"],["One tap swap","Keep what you like"],["Make new ideas anytime","Your plan stays the same"]]]},
+{p:'Calorie goal',h:["{C} calories, planned in 30 seconds","How to plan {C} calories a day without a spreadsheet","Calorie goal {C}? Here is how I fill it","The easy way to build a {C} calorie day","{C} calories a day. Which foods?","Plan a {C} calorie day from food cards"],
+ s:[[["Enter your calorie goal","{C} a day"],["Set a daily number","Try {C}"],["Start with calories","Not a diet, a target"]],
+    [["Pick carbs, fats, and protein","Tap the food cards"],["Mix rice, oats, and olive oil","with your protein"],["Choose the foods you like","Up to 8"]],
+    [["A meter shows the gap","Add a carb or fat to close it"],["About a quarter of calories","come from protein"],["See how close you are","before you build the plan"]]]},
+{p:'Cook from home',h:["No store trip? Cook from what you have","Meal ideas sized to your goal, no store needed","Already have food at home? Start here","Plan meals without going to the store","Pantry week: plan with what you own","Cooking at home this week?"],
+ s:[[["Choose","I am cooking from what I have"],["Pick the home path","No store needed"],["Skip the store","Use what is in the kitchen"]],
+    [["Set your goal","Protein, calories, or both"],["Tell it your goal","Weekly protein or daily calories"],["Pick your foods","Tap the cards"]],
+    [["Get a week of meals","sized to your goal"],["Meal ideas that fit","your numbers"],["No cart, no store","Just the plan"]]]},
+{p:'Weekly routine',h:["Build a weekly food routine, not a diet","Plan once a week. Eat on autopilot.","The weekly food habit that is easy to keep","Sunday planning, done in two minutes","One planning habit that saves your week","Make food decisions once, not daily"],
+ s:[[["Plan once a week","Set the goal, pick foods"],["Pick one planning day","Same day every week"],["Decide once","Then stop thinking about it"]],
+    [["Send it to your cart","or get meals to cook at home"],["Shop it or cook it","Your choice"],["Cart or kitchen","Both paths work"]],
+    [["Keep your streak","Every week you plan counts"],["Rebuy next week","Same plan, one tap"],["Small habit, big week","Start with one plan"]]]},
+];
+const MEALS=[
+["Chicken rice bowl",[["Chicken breast","2 lb"],["Rice","2 cups"],["Broccoli","1 head"],["Soy sauce","3 tbsp"]],42,610],
+["Beef and bean chili",[["Lean ground beef","1 lb"],["Black beans","2 cans"],["Diced tomatoes","1 can"],["Onion","1"]],38,540],
+["Greek yogurt parfait",[["Greek yogurt","2 cups"],["Oats","1 cup"],["Blueberries","1 pint"],["Honey","2 tbsp"]],28,380],
+["Egg and veggie scramble",[["Eggs","8"],["Spinach","1 bag"],["Bell pepper","2"],["Cheese","1 cup"]],32,420],
+["Tuna pasta salad",[["Tuna","3 cans"],["Pasta","12 oz"],["Celery","3 stalks"],["Greek yogurt","1/2 cup"]],36,560],
+["Turkey taco bowls",[["Ground turkey","1 lb"],["Rice","2 cups"],["Black beans","1 can"],["Salsa","1 jar"]],40,590],
+["Peanut butter oats",[["Oats","2 cups"],["Peanut butter","1/2 cup"],["Banana","3"],["Milk","2 cups"]],24,520],
+["Lentil rice soup",[["Lentils","2 cups"],["Rice","1 cup"],["Carrots","4"],["Broth","6 cups"]],26,480],
+["Cottage cheese toast",[["Cottage cheese","2 cups"],["Whole wheat bread","1 loaf"],["Tomatoes","4"],["Olive oil","2 tbsp"]],30,400],
+["Sheet pan chicken",[["Chicken thighs","2 lb"],["Potatoes","2 lb"],["Green beans","1 lb"],["Olive oil","3 tbsp"]],44,640],
+["Burrito bowls",[["Chicken breast","1.5 lb"],["Rice","2 cups"],["Pinto beans","2 cans"],["Corn","1 can"]],46,680],
+["Egg fried rice",[["Eggs","6"],["Rice","3 cups"],["Frozen peas","1 bag"],["Soy sauce","3 tbsp"]],22,470]];
+const LOOK={"Chicken rice bowl":"a bowl of sliced grilled chicken breast over white rice with broccoli and a light soy glaze, steam rising","Beef and bean chili":"a bowl of beef and black bean chili with tomatoes and diced onion, steam rising","Greek yogurt parfait":"a glass of Greek yogurt parfait layered with oats, blueberries and honey","Egg and veggie scramble":"a plate of egg scramble with spinach, bell pepper and melted cheese","Tuna pasta salad":"a bowl of tuna pasta salad with celery and a creamy yogurt dressing","Turkey taco bowls":"a bowl of ground turkey, rice, black beans and salsa, steam rising","Peanut butter oats":"a bowl of peanut butter oatmeal topped with sliced banana","Lentil rice soup":"a ceramic bowl of lentil and rice soup with diced carrots, steam rising","Cottage cheese toast":"toast topped with cottage cheese, sliced tomatoes and a drizzle of olive oil","Sheet pan chicken":"a sheet pan of roasted chicken thighs with potatoes and green beans, steam rising","Burrito bowls":"a burrito bowl with chicken, rice, pinto beans and corn","Egg fried rice":"a bowl of egg fried rice with peas and soy sauce, steam rising"};
+const STEPS=['Goal to cart','Cook from home','Weekly routine','Goal math','Calorie goal'];
+const rand=n=>Math.floor(Math.random()*n),shuf=a=>a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+let seen=[];try{seen=JSON.parse(localStorage.getItem('rcSeen')||'[]')}catch{}
+const hash=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return h.toString(36)};
+function mark(id){if(!seen.includes(id)){seen.push(id);try{localStorage.setItem('rcSeen',JSON.stringify(seen))}catch{}}}
+function one(pl){const P=[600,700,800,900][rand(4)],C=[1800,2000,2200,2500][rand(4)],F=shuf(FOODS).slice(0,4).join(', ');
+ const meals=shuf(MEALS).slice(0,3),m=meals[0],M=m[0],G=m[2],K=m[3],I=m[1].map(x=>x[1]+' '+x[0].toLowerCase()).join(', ');
+ const f=t=>t.replace(/\{P\}/g,P).replace(/\{C\}/g,C).replace(/\{F\}/g,F).replace(/\{M\}/g,M).replace(/\{G\}/g,G).replace(/\{K\}/g,K).replace(/\{I\}/g,I);
+ const hook=f(pl.h[rand(pl.h.length)]);const raw=pl.s.map(sl=>sl[rand(3)]),mid=raw.map(r=>r.map(f));
+ const s=[[hook,'Recipe Cart'],...mid,pl.e||ENDS[rand(ENDS.length)]];
+ const lay=['hook',...raw.map(r=>{const j=r.join(' ');return r[1]==='{I}'?'list':pl.p==='Protein meal'&&j.includes('{G}')&&j.includes('{K}')?'stat':STEPS.includes(pl.p)?'step':'text'}),'cta'];
+ if(pl.p==='Question')lay[0]='quote';
+ const look=LOOK[M]||M,mealP=pl.p==='Protein meal'||pl.p==='Question';
+ const subj=(l,i)=>l==='cta'?null:l==='list'?`overhead flat lay of the raw ingredients for ${M} on a wooden counter: ${I}, nothing cooked yet`
+  :mealP?(l==='hook'||l==='quote'?`${look}, close up`:l==='stat'?`three glass meal prep containers of ${M} stacked on a kitchen counter`:[`${look}, on a kitchen table`,`a fork resting in ${look}`,`${look} next to a glass of water on a wooden table`][i%3])
+  :pl.p==='Same meal fatigue'?[`rows of identical meal prep containers of ${M} stacked in a fridge`,`one meal prep container of ${M} with the lid off beside a stack of lids`,`a fridge shelf packed with containers of ${M}`][i%3]
+  :[`${F} laid out on a kitchen counter next to a reusable grocery bag`,`a shopping basket holding ${F} in a grocery store aisle`,`meal prep containers filled with ${F} on a kitchen counter`][i%3];
+ return{p:pl.p,hook,s,meals,lay,pr:lay.map(subj),G,K,ui:mkui(meals,P,C),id:hash(s.map(x=>x.join('~')).join('|')),cap:`${hook} ${pl.c||'Follow for weekly high protein meals.'} ${DISC} ${TAGS}`}}
+function build(){const get=n=>PL.find(p=>p.p===n),core=['Protein meal','Question','Budget problem','Protein meal'];
+ const rest=shuf(PL.filter(p=>!core.includes(p.p))).slice(0,3);
+ return shuf([...core.map(get),...rest]).map((pl,k)=>{let o;for(let i=0;i<60;i++){o=one(pl);if(!seen.includes(o.id))break}o.dark=k%2===0;o.hs=k%3;return o})}
+// ---- Real app screenshots (saved on this device) ----
+const LAB={picker:'Food picker',meter:'Goal meter',meals:'Week of meals',plan:'Weekly plan with prices',plan2:'Weekly plan, other mode',goals:'Goal setup',path:'Choose your path',streak:'Weekly streak'};
+const SH={'Goal math':{2:'picker',3:'meter'},'Goal to cart':{1:'path',2:'picker',3:'plan'},'Budget problem':{2:'goals',3:'plan'},'Protein meal':{3:'meals'},'Same meal fatigue':{2:'meals',3:'meals'},'Calorie goal':{1:'goals',2:'picker',3:'meter'},'Cook from home':{1:'path',3:'meals'},'Weekly routine':{3:'streak'}};
+const shotOf=(p,i)=>(SH[p]||{})[i]||null;
+const SCENE={'Goal math':'Meal prep containers with grilled chicken, rice and beans on a kitchen counter','Goal to cart':'Hand holding a phone in a grocery aisle, shelves of chicken, yogurt and eggs behind','Budget problem':'Grocery basket with chicken, eggs, yogurt and a receipt on a counter','Protein meal':'Overhead shot of a freshly cooked high protein meal bowl on a kitchen table','Question':'Overhead meal prep containers holding different high protein meals','Same meal fatigue':'Rows of identical meal prep containers stacked in a fridge','Calorie goal':'Balanced plate of rice, chicken, vegetables and a bottle of olive oil','Cook from home':'Open pantry and fridge with everyday staples, warm kitchen light','Weekly routine':'Sunday meal prep, containers lined up, calendar on the fridge'};
+const ANG=['close-up','overhead flat lay','wide shot'];
+function down(file,max,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/im.width),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.75))};im.src=r.result};r.readAsDataURL(file)}
+// ---- Slide renderer: 1080x1920, text kept in TikTok safe area ----
+const promptFor=(o,i)=>`${(o.pr&&o.pr[i])||SCENE[o.p]||'Kitchen scene'}, ${ANG[i%3]}, photorealistic, vertical 9:16, soft natural light, empty space in the upper third for text, no text, no logos`;
+async function genPhoto(o,i,im,a,gb,gm){gb.disabled=true;gb.textContent='Generating...';gm.textContent='';
+ try{const call=()=>fetch('/.netlify/functions/gemini-image',{method:'POST',headers:{'content-type':'application/json','x-passcode':ld('rcPass','')},body:JSON.stringify({prompt:promptFor(o,i)})});
+  let r=await call();
+  if(r.status===401){const pw=window.prompt('Enter your maker passcode');if(!pw)throw new Error('A passcode is needed.');sv('rcPass',pw);r=await call()}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok||!j.image)throw new Error(j.error||('Server said '+r.status));
+  await new Promise((ok,no)=>{const p=new Image();p.onload=()=>{o.ph[i]=p;im.src=draw(o,i);a.href=im.src;ok()};p.onerror=()=>no(new Error('Bad image'));p.src=j.image});
+  gb.textContent='Regenerate photo';gb.disabled=false;return true
+ }catch(e){gb.textContent='Generate photo';gb.disabled=false;gm.textContent='Photo failed: '+e.message+'. Generating photos only works on your Netlify site with the Gemini key added.';return false}}
+function wrap(c,t,x,y,mw,lh){const w=t.split(' ');let l='',n=0;for(const s of w){const m=l?l+' '+s:s;if(c.measureText(m).width>mw&&l){c.fillText(l,x,y+n++*lh);l=s}else l=m}c.fillText(l,x,y+n++*lh);return y+n*lh}
+function cover(c,im,x,y,w,h){const s=Math.max(w/im.width,h/im.height);c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);c.restore()}
+// ---- The app's screens, redrawn from its real layout and styles (index.html) ----
+const A={bg:'#fbf6ee',ink:'#241c12',mute:'#7a6f5c',line:'#e4d8c3',ac:'#d9631e',good:'#3f7a4b',tint:'#fdf1e7'};
+const CATS={Proteins:[['🍗','chicken breast','31g protein · 165 cal per 100g'],['🥚','eggs','6g protein · 70 cal each'],['🥩','lean ground beef','26g protein · 250 cal per 100g'],['🐟','tuna','25g protein · 116 cal per 100g'],['🫘','black beans','9g protein · 132 cal per 100g']],
+ Dairy:[['🥛','Greek yogurt','10g protein · 59 cal per 100g'],['🧀','cottage cheese','11g protein · 98 cal per 100g'],['🥛','milk','3g protein · 61 cal per 100g'],['🧀','cheddar cheese','25g protein · 403 cal per 100g']],
+ Carbs:[['🍚','rice','3g protein · 130 cal per 100g'],['🥣','oats','13g protein · 389 cal per 100g'],['🍝','pasta','5g protein · 131 cal per 100g'],['🍞','whole wheat bread','13g protein · 247 cal per 100g'],['🥔','potatoes','2g protein · 77 cal per 100g']],
+ Fats:[['🫒','olive oil','0g protein · 884 cal per 100g'],['🥜','peanut butter','25g protein · 588 cal per 100g'],['🥑','avocado','2g protein · 160 cal per 100g'],['🌰','almonds','21g protein · 579 cal per 100g']]};
+function mkui(meals,P0,C0){const cat=shuf(Object.keys(CATS))[0],foods=shuf(CATS[cat]).slice(0,4),s=1+rand(7);
+ return{cat,foods,sel:shuf([0,1,2,3]).slice(0,1+rand(2)),goal:['protein','calories','both'][rand(3)],P:P0||[600,700,800,900][rand(4)],C:C0||[1800,2000,2200,2500][rand(4)],pct:[100,100,95,86,64][rand(5)],m:meals[0],min:[15,20,25,30,35][rand(5)],home:rand(2),mode:rand(2),cost:+((P0||700)*(0.048+rand(12)/1000)).toFixed(2),sav:+(3+rand(90)/10).toFixed(2),s,w:s+rand(5)}}
+function rr(c,x,y,w,h,r,f,s,lw){c.beginPath();c.roundRect(x,y,w,h,r);if(f){c.fillStyle=f;c.fill()}if(s){c.strokeStyle=s;c.lineWidth=lw||1.5;c.stroke()}}
+function tx(c,t,x,y,sz,wt,col,al){c.font=wt+' '+sz+'px '+F;c.fillStyle=col;c.textAlign=al||'left';c.fillText(t,x,y);c.textAlign='left'}
+function chips(c,L,on,y){const w=(358-(L.length-1)*6)/L.length;L.forEach((l,i)=>{const x=i*(w+6),s=i===on;rr(c,x,y,w,34,8,s?A.ink:'#fff',s?A.ink:A.line);tx(c,l,x+w/2,y+22,14,'600',s?'#fff':A.ink,'center')})}
+function tile(c,x,y,w,h,e,t,sub,on){rr(c,x,y,w,h,10,on?A.tint:'#fff',on?A.ac:A.line);tx(c,e,x+10,y+30,24,'400',A.ink);tx(c,t,x+10,y+53,14.5,'600',A.ink);c.font='400 10px '+F;c.fillStyle=A.mute;wrap(c,sub,x+10,y+68,w-20,12);if(on){rr(c,x+w-30,y+6,24,24,12,A.ac);tx(c,'✓',x+w-18,y+23,14,'700','#fff','center')}}
+function card(c,y,h){rr(c,0,y,358,h,10,'#fff',A.line,1)}
+const SCR={
+ picker(c,u){let x=0;['Proteins','Dairy','Carbs','Fats'].forEach(k=>{c.font='600 14px '+F;const w=c.measureText(k).width+26+(k===u.cat?20:0);rr(c,x,0,w,36,18,k===u.cat?A.ink:'#fff',k===u.cat?A.ink:A.line);tx(c,k,x+13,23,14,'600',k===u.cat?'#fff':A.mute);if(k===u.cat){rr(c,x+w-26,9,18,18,9,A.ac);tx(c,String(u.sel.length),x+w-17,22,11,'700','#fff','center')}x+=w+6});
+  u.foods.forEach((f,i)=>tile(c,i%2*183,46+Math.floor(i/2)*92,175,84,f[0],f[1],f[2],u.sel.includes(i)))},
+ meter(c,u){const p=u.sel.map(i=>u.foods[i]);tx(c,'Your picks ('+p.length+' of 8)',0,16,14,'600',A.ink);
+  p.forEach((f,i)=>{rr(c,0,26+i*40,358,34,8,'#fff',A.line);tx(c,f[0]+' '+f[1],10,48+i*40,14,'600',A.ink);rr(c,324,26+i*40,34,34,8,'#fff',A.line);tx(c,'×',341,49+i*40,16,'400',A.ink,'center')});
+  const g=u.pct>=95,t=g?['#e8f3ea',A.good]:u.pct>=70?['#fdf3d9','#8a6416']:['#fbe9e4','#a8341c'],y=26+p.length*40+10;
+  rr(c,0,y,358,g?46:76,8,t[0]);c.font='400 14px '+F;c.fillStyle=t[1];let e=wrap(c,'Your picks can reach about '+u.pct+'% of your '+(u.goal==='calories'?'calorie':'protein')+' goal.',12,y+22,334,19);if(!g)wrap(c,u.goal==='calories'?'Add a carb like rice or oats to close the gap.':'Pick another protein food to cover the rest.',12,e,334,19)},
+ goals(c,u){tx(c,'My goal',0,14,14,'600',A.ink);chips(c,['Protein','Calories','Both'],['protein','calories','both'].indexOf(u.goal),22);let y=76;
+  if(u.goal!=='calories'){tx(c,'Weekly protein target (grams)',0,y+12,14,'600',A.ink);rr(c,0,y+22,358,38,8,'#fff',A.line);tx(c,String(u.P),12,y+47,16,'400',A.ink);y+=72}
+  if(u.goal!=='protein'){tx(c,'Daily calorie goal',0,y+12,14,'600',A.ink);rr(c,0,y+22,358,38,8,'#fff',A.line);tx(c,String(u.C),12,y+47,16,'400',A.ink)}},
+ path(c,u){[['🛒','I am shopping at Kroger','Find the cheapest way to hit your goal and send it to your cart.'],['🏠','I am cooking from what I have','Get meal ideas sized to your goal. No store needed.']].forEach((t,i)=>tile(c,0,i*108,358,100,t[0],t[1],t[2],i===u.home))},
+ meals(c,u){const m=u.m;card(c,0,226);tx(c,m[0],14,28,17,'800',A.ink);tx(c,m[1].slice(0,3).map(x=>x[0]).join(', ').toLowerCase(),14,46,12,'400',A.mute);tx(c,m[2]+'g protein from your plan foods · '+u.min+' min',14,64,12,'400',A.mute);
+  m[1].slice(0,3).forEach((x,i)=>tx(c,'•  '+x[1]+' '+x[0].toLowerCase(),18,92+i*22,14,'400',A.ink));
+  ['Recipe','Swap','Save'].forEach((l,i)=>{const w=104.6,x=14+i*(w+8);rr(c,x,160,w,40,8,'#fff',A.line);tx(c,l,x+w/2,185,15,'600',A.ink,'center')})},
+ plan(c,u){const m=u.mode,v=m===0?u.cost:u.cost+u.sav;card(c,0,226);tx(c,'Your weekly plan',14,28,16,'800',A.ink);[['Cheapest',14],['Balanced',184]].forEach((b,i)=>{const on=i===m;rr(c,b[1],38,160,34,8,on?A.ink:'#fff',on?A.ink:A.line);tx(c,b[0],b[1]+80,60,14,'600',on?'#fff':A.ink,'center')});
+  tx(c,'Estimated protein',14,96,14,'700',A.ink);tx(c,u.P+'g of '+u.P+'g',344,96,14,'700',A.ink,'right');tx(c,'Estimated cost',14,118,13,'400',A.ink);tx(c,'$'+v.toFixed(2),344,118,13,'400',A.ink,'right');
+  c.font='600 12px '+F;c.fillStyle=A.good;wrap(c,m===0?'$'+u.sav.toFixed(2)+' cheaper than the Balanced plan ($'+(u.cost+u.sav).toFixed(2)+').':'Cheapest would save $'+u.sav.toFixed(2)+' by leaning on the best deals.',14,142,330,15);
+  rr(c,14,168,330,40,8,A.ink);tx(c,'Add full plan to my Kroger cart',179,193,14,'600','#fff','center')},
+ plan2(c,u){SCR.plan(c,{...u,mode:1-u.mode})},
+ streak(c,u){card(c,0,112);tx(c,u.s+' week streak',14,34,20,'800',A.ink);tx(c,u.w+' weeks planned',344,32,12,'400',A.mute,'right');for(let i=0;i<8;i++){c.fillStyle=i>=8-u.s?A.good:A.line;c.beginPath();c.arc(21+i*20,58,7,0,7);c.fill()}tx(c,'Plan this week to keep your streak going.',14,92,13,'400',A.mute)}};
+function drawUI(c,pn){const x=110,y=820,w=860,h=580,k=2.25;if(pn.ph){c.save();c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=50;c.shadowOffsetY=16;c.fillStyle=A.bg;c.beginPath();c.roundRect(x,y,w,h,36);c.fill();c.restore()}c.save();c.beginPath();c.roundRect(x,y,w,h,36);c.clip();c.fillStyle=A.bg;c.fillRect(x,y,w,h);c.translate(x+27,y+27);c.scale(k,k);(SCR[pn.k]||(()=>{}))(c,pn.o.ui);c.restore();c.strokeStyle=pn.ph?'#ffffff':A.ac;c.lineWidth=pn.ph?6:8;c.beginPath();c.roundRect(x,y,w,h,36);c.stroke()}
+// ---- Layouts for slides without a photo or app screen ----
+const ws=(c,t,mw)=>{let l='';const o=[];for(const x of String(t).split(' ')){const m=l?l+' '+x:x;if(c.measureText(m).width>mw&&l){o.push(l);l=x}else l=m}o.push(l);return o};
+function drawLay(c,X,big,small,i,n,last,dk){
+ const lay=X.lay,hs=X.hs||0,org=lay==='hook'&&hs===1,MW=W-300;
+ const bg=org?B.ac:dk?B.ink:B.bg,ink=org?B.ink:dk?B.bg:B.ink,mute=org?B.ink:dk?'#cdbfa6':B.mute,rule=dk?'#4a3b2b':'#e4d8c3';
+ c.fillStyle=bg;c.fillRect(0,0,W,H);
+ if(!org&&!(lay==='hook'&&hs===2)){c.fillStyle=dk?B.deep:B.card;c.beginPath();c.roundRect(60,300,W-120,1100,40);c.fill();c.fillStyle=B.ac;c.fillRect(60,300,16,1100)}
+ c.fillStyle=mute;c.font='600 42px '+F;c.textAlign='left';c.fillText('Recipe Cart',110,230);c.textAlign='right';c.fillText(i+1+' / '+n,W-110,230);c.textAlign='left';
+ const put=(items,mid)=>{const L=items.map(t=>{c.font=t.w+' '+t.z+'px '+F;return{...t,ln:ws(c,t.t,MW)}});const tot=L.reduce((a,t)=>a+(t.g||0)+t.ln.length*t.z*1.12,0);let y=mid-tot/2;
+  L.forEach(t=>{y+=t.g||0;c.font=t.w+' '+t.z+'px '+F;c.fillStyle=t.c;t.ln.forEach(l=>{c.fillText(l,130,y+t.z*.9);y+=t.z*1.12})})};
+ const sw=(col)=>{c.font='600 54px '+F;c.fillStyle=col;c.fillText('Swipe',130,1300)};
+ if(lay==='hook'){put([{t:big,z:big.length>48?96:112,w:800,c:ink}],790);if(hs===2){c.fillStyle=B.ac;c.fillRect(130,1150,300,14)}sw(org?B.ink:B.ac)}
+ else if(lay==='quote'){c.font='800 420px '+F;c.fillStyle=B.ac;c.fillText('\u201C',110,760);put([{t:big,z:big.length>48?92:104,w:800,c:ink}],990);sw(B.ac)}
+ else if(lay==='list'){put([{t:big,z:80,w:800,c:ink}],440);const it=String(small).split(', ');it.forEach((t,k)=>{const y=620+k*150;c.strokeStyle=rule;c.lineWidth=3;c.beginPath();c.moveTo(130,y+110);c.lineTo(W-130,y+110);c.stroke();
+   c.fillStyle=B.ac;c.beginPath();c.arc(160,y+50,28,0,7);c.fill();c.strokeStyle='#fff';c.lineWidth=7;c.lineCap='round';c.beginPath();c.moveTo(147,y+51);c.lineTo(157,y+62);c.lineTo(175,y+38);c.stroke();
+   let z=56;c.font='600 '+z+'px '+F;while(c.measureText(t).width>720&&z>34){z-=2;c.font='600 '+z+'px '+F}c.fillStyle=ink;c.fillText(t,225,y+68)})}
+ else if(lay==='stat'){c.font='600 50px '+F;c.fillStyle=mute;c.fillText('Estimates per meal',130,420);
+  [[X.G+'g','protein',800],[X.K,'calories',1200]].forEach(r=>{c.font='800 300px '+F;c.fillStyle=B.ac;c.fillText(r[0],120,r[2]);c.font='600 64px '+F;c.fillStyle=ink;c.fillText(r[1],130,r[2]+90)})}
+ else if(lay==='step'){c.font='800 380px '+F;c.fillStyle=B.ac;c.fillText(String(i),115,740);put([{t:big,z:90,w:800,c:ink},{t:small,z:56,w:600,c:mute,g:28}],1070)}
+ else if(lay==='cta'){put([{t:big,z:big.length>24?100:130,w:800,c:ink},{t:small,z:60,w:600,c:B.ac,g:30}],740);c.fillStyle=B.ac;c.beginPath();c.roundRect(130,1090,520,150,75);c.fill();c.font='800 70px '+F;c.fillStyle='#fff';c.textAlign='center';c.fillText('Follow',390,1190);c.textAlign='left';c.font='600 50px '+F;c.fillStyle=mute;c.fillText('@tryrecipecart',130,1320)}
+ else put([{t:big,z:100,w:800,c:ink},{t:small,z:58,w:600,c:mute,g:36}],850)}
+function slide(big,small,i,n,last,ph,sh,pn,dk,X){const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');if(!ph&&!pn&&X&&X.lay){drawLay(c,X,big,small,i,n,last,dk);return cv}
+ const ink=ph?'#ffffff':dk?B.bg:B.ink,mute=ph?'#eadfcb':dk?'#cdbfa6':B.mute;
+ c.fillStyle=dk?B.ink:B.bg;c.fillRect(0,0,W,H);
+ if(ph){cover(c,ph,0,0,W,H);const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(20,14,8,.72)');g.addColorStop(.6,'rgba(20,14,8,.5)');g.addColorStop(1,'rgba(20,14,8,.35)');c.fillStyle=g;c.fillRect(0,0,W,H)}
+ else{c.fillStyle=dk?B.deep:B.card;c.beginPath();c.roundRect(60,300,W-120,1100,40);c.fill();c.fillStyle=B.ac;c.fillRect(60,300,16,1100)}
+ c.fillStyle=mute;c.font='600 42px '+F;c.fillText('Recipe Cart',110,230);
+ c.textAlign='right';c.fillText(i+1+' / '+n,W-110,230);c.textAlign='left';
+ const box=sh||pn,first=i===0,sz=box?76:first?(big.length>48?96:112):last?(big.length>24?100:130):100;c.fillStyle=ink;c.font='800 '+sz+'px '+F;
+ const e=wrap(c,big,130,box?440:first?520:480,W-300,sz*1.1);
+ if(small&&!first){c.fillStyle=last?B.ac:mute;c.font='600 '+(box?46:58)+'px '+F;wrap(c,small,130,e+(box?16:30),W-300,box?58:76)}
+ if(first){c.fillStyle=ph?'#ffb27d':B.ac;c.font='600 54px '+F;c.fillText('Swipe',130,1300)}
+ if(pn)drawUI(c,pn);else if(false){const bx=290,by=900,bw=500,bh=500,s=bw/sh.width;c.save();c.beginPath();c.roundRect(bx,by,bw,bh,36);c.clip();c.fillStyle='#fff';c.fillRect(bx,by,bw,bh);c.drawImage(sh,bx,by,bw,sh.height*s);c.restore();c.strokeStyle=B.ac;c.lineWidth=8;c.beginPath();c.roundRect(bx,by,bw,bh,36);c.stroke()}
+ return cv}
+const draw=(o,i)=>{const k=shotOf(o.p,i),np=k?{k,o,ph:!!o.ph[i]}:null;return slide(o.s[i][0],o.s[i][1],i,o.s.length,i===o.s.length-1,o.ph[i]||null,null,np,o.dark,{lay:(o.lay||[])[i],hs:o.hs||0,G:o.G,K:o.K}).toDataURL('image/png')};
+// ---- UI ----
+let ideas=[],n=1;
+function stat(){document.getElementById('used').textContent='Posts made so far: '+seen.length+'. New sets skip these.'}
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+let saved=ld('rcSaved',[]);
+const strip=o=>({p:o.p,hook:o.hook,s:o.s,meals:o.meals,ui:o.ui,id:o.id,cap:o.cap,dark:o.dark,lay:o.lay,pr:o.pr,hs:o.hs,G:o.G,K:o.K});
+function addCard(L,o,tag,mode){o.ph=o.ph||[];const d=document.createElement('div');d.className='card';
+ d.innerHTML='<div class="tag"></div><div class="hook"></div><div class="two"><button class="b p mk">Make slides</button><button class="b sec"></button></div>';
+ d.querySelector('.tag').textContent=tag;d.querySelector('.hook').textContent=o.hook;
+ const mk=d.querySelector('.mk'),sec=d.querySelector('.sec');
+ mk.onclick=()=>{mk.disabled=true;make(d,o)};
+ if(mode==='saved'){sec.textContent='Delete';sec.onclick=()=>{saved=saved.filter(x=>x.id!==o.id);sv('rcSaved',saved);renderSaved()}}
+ else{const has=saved.some(x=>x.id===o.id);sec.textContent=has?'Saved':'Save idea';sec.disabled=has;sec.onclick=()=>{if(!saved.some(x=>x.id===o.id)){saved.push(strip(o));sv('rcSaved',saved)}sec.textContent='Saved';sec.disabled=true;renderSaved()}}
+ L.append(d)}
+function render(){const L=document.getElementById('list');L.innerHTML='';const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];ideas.forEach((o,k)=>addCard(L,o,days[k]+' · '+o.p+(o.dark?' · Espresso':' · Cream')))}
+function renderSaved(){const L=document.getElementById('saved');L.innerHTML=saved.length?'':'<p class="hint">Nothing saved yet. Tap Save idea on any idea. Photos are not saved, only the idea, text, and app screens.</p>';saved.slice().reverse().forEach(o=>addCard(L,{...o,ph:[]},'Saved · '+o.p,'saved'))}
+function make(d,o){mark(o.id);stat();const go=()=>{const g=document.createElement('div');g.className='slides';const imgs=[],gens=[],gm=document.createElement('p');gm.className='hint';
+  o.s.forEach((s,i)=>{const w=document.createElement('div'),im=new Image();im.src=draw(o,i);im.alt='Slide '+(i+1)+': '+s[0];imgs.push(im);
+   const a=document.createElement('a');a.textContent='Save '+(i+1);a.href=im.src;a.download='rc-'+(i+1)+'.png';
+   const pb=document.createElement('label');pb.className='ph';pb.innerHTML='Add photo<input type="file" accept="image/*" hidden>';
+   pb.querySelector('input').onchange=e=>{const f=e.target.files[0];if(!f)return;down(f,1080,u=>{const p=new Image();p.onload=()=>{o.ph[i]=p;im.src=draw(o,i);a.href=im.src};p.src=u})};
+   const gb=document.createElement('button');gb.type='button';gb.className='ph gen';gb.textContent='Generate photo';gb.style.cssText='background:none;border:0;width:100%;padding:6px 0;min-height:36px';
+   if(i<o.s.length-1)gb.onclick=()=>genPhoto(o,i,im,a,gb,gm);else gb.hidden=true;gens.push(gb);
+   w.append(im,a,pb,gb);g.append(w)});
+  const pr=o.s.map((s,i)=>{const k=shotOf(o.p,i);if(i===o.s.length-1)return null;
+   return k?`Slide ${i+1}: shows the ${LAB[k]} screen (drawn for you, no photo needed)`:`Slide ${i+1}: ${(o.pr&&o.pr[i])||SCENE[o.p]||'Kitchen scene'}, ${ANG[i%3]}, photorealistic, vertical 9:16, soft natural light, empty space in the upper third for text, no text, no logos`}).filter(Boolean).join('\n\n');
+  const t1=document.createElement('textarea');t1.value=pr;t1.setAttribute('aria-label','Image prompts');
+  const t=document.createElement('textarea');t.value=o.cap;t.setAttribute('aria-label','Caption');
+  const cp=document.createElement('button');cp.className='b';cp.style.cssText='width:100%;margin-top:8px';cp.textContent='Copy caption';
+  cp.onclick=()=>{t.select();try{navigator.clipboard.writeText(t.value)}catch{document.execCommand('copy')};cp.textContent='Copied'};
+  const h=document.createElement('p');h.className='hint';h.textContent='Image prompts for Gemini (copy one, save the photo, then tap Add photo on that slide). Slides that show an app screen are drawn for you.';
+  const ga=document.createElement('button');ga.type='button';ga.className='b';ga.style.cssText='width:100%;margin-top:8px';ga.textContent='Generate all photos';
+  ga.onclick=async()=>{ga.disabled=true;for(let i=0;i<gens.length-1;i++){if(o.ph[i])continue;ga.textContent='Generating '+(i+1)+' of '+(gens.length-1)+'...';if(!await gens[i].onclick())break}ga.textContent='Generate all photos';ga.disabled=false};
+  d.append(g,ga,gm,h,t1,t,cp)};
+ Promise.all([document.fonts.load("800 100px 'Bricolage Grotesque'"),document.fonts.load("600 50px 'Bricolage Grotesque'")]).then(go,go)}
+function ver(){document.getElementById('ver').textContent='Set '+n+' of ideas. Tap New week for a different set.'}
+function gen(){ideas=build();render();stat();ver();sv('rcSet',{ideas:ideas.map(strip),n});window.scrollTo({top:0,behavior:'smooth'})}
+document.getElementById('neu').onclick=()=>{n++;gen()};
+document.getElementById('shuf').onclick=()=>{n++;gen()};
+document.getElementById('clr').onclick=()=>{seen=[];try{localStorage.removeItem('rcSeen')}catch{}stat()};
+const prev=ld('rcSet',null);if(prev&&prev.ideas&&prev.ideas.length&&prev.ideas.every(o=>'lay' in o&&PL.some(p=>p.p===o.p))){ideas=prev.ideas;n=prev.n||1;render();stat();ver()}else gen();
+renderSaved();
+</script></body></html>
