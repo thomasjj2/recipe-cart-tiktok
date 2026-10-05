@@ -27,7 +27,7 @@ textarea{width:100%;min-height:96px;margin-top:12px;font:inherit;font-size:16px;
 :focus-visible{outline:3px solid #f2c230;outline-offset:2px}
 </style></head><body>
 <h1>Recipe Cart TikTok maker</h1>
-<p class="sub">A week of photo posts built to earn follows: value first, a question post, and a follow call to action on the last slide. Make slides, save them, post.</p>
+<p class="sub">A week of photo posts for the Ideas app: dinner from what you already have, a question post, and a follow call to action on the last slide. Make slides, save them, post.</p>
 <div class="bar"><button class="b p" id="neu">New week of ideas</button><button class="b" id="shuf">Reshuffle</button></div>
 <p class="hint" id="note">Tip: post one a day. Photos are optional, every post works with the text and app screens alone. Save the slides, upload them to TikTok as a photo post, and paste the caption.</p>
 <p class="hint" id="ver"></p><p class="hint" id="used"></p><p class="hint"><button class="b" id="clr" style="min-height:36px;flex:none;padding:0 12px">Clear history</button></p>
@@ -44,48 +44,37 @@ function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t
 const wk=()=>{const d=new Date();return Math.floor(d/6048e5)};
 let seed=wk()*7+1;
 // ---- What the app knows ----
-const FOODS=["chicken breast","Greek yogurt","eggs","black beans","lean ground beef","cottage cheese","tuna","rice","oats","peanut butter","lentils"];
-const TAGS='#mealprep #highproteinmeals #proteingoals #groceryhacks #mealprepideas #budgetgroceries #recipecart';
-const DISC='Estimates, not medical advice. Prices can differ at checkout. Not affiliated with Kroger.';
-const ENDS=[['Follow for weekly high protein meals','Free app in my bio'],['Follow so you never run out of protein meals','Try the free app in my bio'],['New protein meal every week','Follow, then try the app in my bio']];
-// Each post type: p=name, h=hook lines, s=3 slide slots with 3 variants each. {P} {C} {F} get filled in.
+const FOODS=["chicken","eggs","rice","pasta","potatoes","spinach","ground beef","canned beans","tortillas","cheese","onion","frozen vegetables"];
+const TAGS='#whatsinmyfridge #dinnerideas #quickdinner #cookingathome #mealideas #groceryhacks #recipecart';
+const DISC='Prices are estimates and can differ at checkout. Not affiliated with Kroger.';
+const ENDS=[['Follow for dinner ideas from what you already have','Free app in my bio'],['Follow so dinner never gets boring','Try the free app in my bio'],['A new dinner idea every day','Follow, then try the app in my bio']];
+// Each post type: p=name, h=hook lines, s=3 slide slots with 3 variants each.
+// Tokens: {M} meal, {H} foods you have, {I} foods you have as a list, {N} foods to buy, {T} minutes, {X} count to buy, {D} dollars, {F} four foods
 const PL=[
-{p:'Protein meal',c:'New high protein meal every week. Follow so you do not miss one.',h:["{G}g of protein in one bowl: {M}","High protein meal: {M}","{M}: {G}g of protein","A {G}g protein meal with 4 ingredients","Easy high protein meal prep: {M}","{K} calories, {G}g protein: {M}"],
- s:[[["What you need","{I}"],["Grocery list","{I}"],["Only a few ingredients","{I}"]],
-    [["{G}g of protein","About {K} calories"],["{G}g protein in one meal","Roughly {K} calories"],["The numbers","{G}g protein, {K} calories"]],
-    [["Fits a weekly plan","Recipe Cart builds the week from foods you pick"],["Meal prep friendly","Make it once, eat it all week"],["Want more like this?","Recipe Cart plans a week of meals for you"]]]},
-{p:'Question',c:'Tell me yours in the comments. I read every one.',e:["Drop yours below","Follow for weekly protein meals"],h:["Meal prep folks, what is your favorite protein meal?","What is your go to meal prep protein?","Be honest: what do you eat to hit your protein?","What is your cheapest high protein meal?","Meal prep people: what is on your plate this week?","What high protein meal do you never get tired of?"],
- s:[[["Mine: {M}","{G}g of protein"],["I keep making {M}","{G}g protein, {K} calories"],["Mine this week","{M}, {G}g of protein"]],
-    [["What is yours?","Tell me in the comments"],["Drop your meal below","I read every comment"],["Your turn","Name the meal, I will check it out"]],
-    [["Follow for the best ones","I will share my favorites"],["Steal good ideas","Follow to see the best answers"],["Save this for later","Your meal prep list starts here"]]]},
-{p:'Budget problem',c:'Estimated prices from Kroger, they can differ at checkout.',h:["Can't hit {P}g protein without blowing your budget?","Hit {P}g of protein without a huge grocery bill","Protein goal vs grocery budget: here is the fix","Same {P}g of protein, a lower grocery bill","Stop overpaying for your protein goal","The cheapest way to hit {P}g of protein"],
- s:[[["Protein adds up fast","Especially if you guess"],["Guessing gets expensive","Wrong foods, wrong amounts"],["Hard to plan by hand","Prices, protein, and portions"]],
-    [["Set your goal","{P}g of protein a week"],["Tell it your target","{P}g protein, up to 8 foods"],["Pick your foods","It plans the cheapest way"]],
-    [["See the price gap","Cheapest vs Balanced, side by side"],["Same goal, lower bill","When there is a gap, it shows"],["Pick your plan","Then send it to your Kroger cart"]]]},
-{p:'Goal math',h:["Hit {P}g of protein this week with 4 foods","How I plan {P}g of protein without counting daily","{P}g of protein a week: the 4 foods I would pick","Stop guessing protein. Set {P}g for the week.","Protein goal {P}g? Pick foods, not macros","My {P}g protein week starts with this list"],
- s:[[["Weekly goal","Not daily guilt"],["Think in weeks","One off day will not wreck it"],["Start with a number","Weekly protein in grams"]],
-    [["Pick your foods","{F}"],["Tap food cards","Chicken, yogurt, eggs, beans"],["Choose up to 8 foods","The plan splits the goal"]],
-    [["A meter checks your picks","See if you can reach the goal"],["Recipe Cart splits it","across your picks"],["No one food carries it","The plan spreads it out"]]]},
-{p:'Goal to cart',h:["Protein goal to Kroger cart in four taps","Set a goal. Fill your cart.","From goal to groceries in one flow","I stopped guessing what to buy at Kroger","Pick a goal, then shop it","Your protein goal, already in the cart"],
- s:[[["Choose","I am shopping at Kroger"],["Start with the store path","Kroger prices for your goal"],["Pick the Kroger path","Find the cheapest way to hit it"]],
-    [["Set a goal, tap your foods","Protein, calories, or both"],["Pick up to 8 foods","The plan fits your goal"],["Tell it what you eat","Then let it do the math"]],
-    [["Add the full plan to your cart","One tap"],["See the cost, then send it","Straight to your Kroger cart"],["Know the total before you shop","Then add it to your cart"]]]},
-{p:'Same meal fatigue',h:["Meal prep without eating the same thing all week","Sick of chicken and rice by Wednesday?","Why meal prep gets boring, and the fix","Same meal four days in a row? Try this","Meal prep, but not the same plate","Bored of your meal prep already?"],
- s:[[["You prep once","Chicken, rice, beans, yogurt"],["Sunday you prep","Wednesday you are over it"],["Same foods all week","That is the problem"]],
-    [["Recipe Cart makes a week of meals","from the exact foods you bought"],["Meals built from your foods","No extra shopping"],["A new idea for every day","using your own plan"]],
-    [["Do not like a meal?","Swap it"],["One tap swap","Keep what you like"],["Make new ideas anytime","Your plan stays the same"]]]},
-{p:'Calorie goal',h:["{C} calories, planned in 30 seconds","How to plan {C} calories a day without a spreadsheet","Calorie goal {C}? Here is how I fill it","The easy way to build a {C} calorie day","{C} calories a day. Which foods?","Plan a {C} calorie day from food cards"],
- s:[[["Enter your calorie goal","{C} a day"],["Set a daily number","Try {C}"],["Start with calories","Not a diet, a target"]],
-    [["Pick carbs, fats, and protein","Tap the food cards"],["Mix rice, oats, and olive oil","with your protein"],["Choose the foods you like","Up to 8"]],
-    [["A meter shows the gap","Add a carb or fat to close it"],["About a quarter of calories","come from protein"],["See how close you are","before you build the plan"]]]},
-{p:'Cook from home',h:["No store trip? Cook from what you have","Meal ideas sized to your goal, no store needed","Already have food at home? Start here","Plan meals without going to the store","Pantry week: plan with what you own","Cooking at home this week?"],
- s:[[["Choose","I am cooking from what I have"],["Pick the home path","No store needed"],["Skip the store","Use what is in the kitchen"]],
-    [["Set your goal","Protein, calories, or both"],["Tell it your goal","Weekly protein or daily calories"],["Pick your foods","Tap the cards"]],
-    [["Get a week of meals","sized to your goal"],["Meal ideas that fit","your numbers"],["No cart, no store","Just the plan"]]]},
-{p:'Weekly routine',h:["Build a weekly food routine, not a diet","Plan once a week. Eat on autopilot.","The weekly food habit that is easy to keep","Sunday planning, done in two minutes","One planning habit that saves your week","Make food decisions once, not daily"],
- s:[[["Plan once a week","Set the goal, pick foods"],["Pick one planning day","Same day every week"],["Decide once","Then stop thinking about it"]],
-    [["Send it to your cart","or get meals to cook at home"],["Shop it or cook it","Your choice"],["Cart or kitchen","Both paths work"]],
-    [["Keep your streak","Every week you plan counts"],["Rebuy next week","Same plan, one tap"],["Small habit, big week","Start with one plan"]]]},
+{p:'Kitchen to dinner',c:'Type what is in your kitchen, get dinner ideas. Follow for one every day.',h:["I had {H}. Dinner was {M}.","{M} from {H}","What I made with {H}","{T} minute dinner from {H}","{H} in the fridge? Make {M}","Dinner idea: {M}"],
+ s:[[["What I had","{I}"],["In my kitchen","{I}"],["Only these foods","{I}"]],
+    [["The idea","{M}, {T} minutes"],["Dinner tonight","{M}"],["Recipe Cart suggested","{M}, {T} min"]],
+    [["It shows what is missing","Just {N} to buy"],["You have, you need","Then send it to your Kroger cart"],["Missing something?","Add it to your Kroger cart"]]]},
+{p:'Question',c:'Tell me yours in the comments. I will turn it into a dinner idea.',e:["Drop yours below","Follow for dinner ideas"],h:["What is in your fridge right now?","Name 3 foods you have. I will make dinner.","What do you always have but never know how to cook?","Be honest: what is the most boring thing in your fridge?","What do you make when nothing is planned?","Drop your leftovers. I will plan dinner."],
+ s:[[["Mine: {H}","Dinner: {M}"],["My fridge today","{H}"],["I have {H}","So I made {M}"]],
+    [["What is yours?","Tell me in the comments"],["Drop 3 foods below","I read every comment"],["Your turn","List what you have"]],
+    [["I will pick the best ones","And turn them into dinner"],["Follow for the best answers","Dinner ideas every day"],["Save this for later","Your next dinner starts here"]]]},
+{p:'Budget',c:'Estimated prices from Kroger, they can differ at checkout.',h:["Dinner from your fridge plus {X} {Y}","Skip the big shop. Dinner for under ${D}.","You already have most of dinner","Only buy what is missing","Stop buying the same groceries twice","Dinner for ${D} or less, using what I had"],
+ s:[[["You already have","{H}"],["In your kitchen already","{H}"],["Start with what you own","{H}"]],
+    [["Only {X} {Y} to buy","{N}"],["The missing part","{N}"],["Buy just this","{N}"]],
+    [["See the price first","Then send it to your Kroger cart"],["Know the total","Before you shop"],["Missing items only","Priced for your store"]]]},
+{p:'How it works',h:["Tell it what you have. Get dinner ideas.","Dinner ideas from your own kitchen in 3 taps","Type your fridge. Get dinner.","How I decide what to cook","Never wonder what is for dinner again","From fridge to dinner idea in 10 seconds"],
+ s:[[["Type what you have","Or tap the common foods"],["List your foods","Chicken, rice, spinach"],["Start with your kitchen","Add what you have"]],
+    [["Get ideas","Quick, easy, different every time"],["Pick a dinner idea","Each one shows what you still need"],["See what fits","Using what you already own"]],
+    [["Missing something?","Send it to your Kroger cart"],["Make it, or buy what is missing","One tap to your cart"],["Cook it or shop the rest","Your choice"]]]},
+{p:'Variety',h:["Same chicken and rice, 8 different dinners","Sick of the same dinner every week?","Bored of your usual dinner?","Stop making the same 3 meals","One grocery list, a week of different dinners","Meal prep boredom has a fix"],
+ s:[[["Same foods every week","{H}"],["Wednesday you are over it","Same plate again"],["The problem","Same 3 dinners on repeat"]],
+    [["Recipe Cart gives ideas","From the foods you already have"],["8 ideas at a time","Different styles every time"],["New dinner, same groceries","Tap More ideas anytime"]],
+    [["Keep the ones you like","Tap Save, find them later"],["Not feeling these?","Tap More ideas"],["Build your rotation","Save the dinners you love"]]]},
+{p:'Quick dinner',h:["{T} minute dinner from {H}","Dinner in {T} minutes, no extra shopping","Quick dinner with what you have","Tired and hungry? Start here","Dinner in {T} minutes: {M}","A {T} minute meal from your fridge"],
+ s:[[["Tired, hungry, short on time","Set cooking time to Quick"],["Set it to Quick","Under 30 minutes"],["Pick Quick","Minimal steps"]],
+    [["Today: {M}","{T} minutes"],["Dinner: {M}","About {T} minutes"],["Tonight: {M}","Ready in {T} minutes"]],
+    [["Steps in plain language","No long recipe to read"],["4 to 8 steps","Short and clear"],["Tap Make it","The recipe shows right there"]]]},
 ];
 const MEALS=[
 ["Chicken rice bowl",[["Chicken breast","2 lb"],["Rice","2 cups"],["Broccoli","1 head"],["Soy sauce","3 tbsp"]],42,610],
@@ -101,32 +90,36 @@ const MEALS=[
 ["Burrito bowls",[["Chicken breast","1.5 lb"],["Rice","2 cups"],["Pinto beans","2 cans"],["Corn","1 can"]],46,680],
 ["Egg fried rice",[["Eggs","6"],["Rice","3 cups"],["Frozen peas","1 bag"],["Soy sauce","3 tbsp"]],22,470]];
 const LOOK={"Chicken rice bowl":"a bowl of sliced grilled chicken breast over white rice with broccoli and a light soy glaze, steam rising","Beef and bean chili":"a bowl of beef and black bean chili with tomatoes and diced onion, steam rising","Greek yogurt parfait":"a glass of Greek yogurt parfait layered with oats, blueberries and honey","Egg and veggie scramble":"a plate of egg scramble with spinach, bell pepper and melted cheese","Tuna pasta salad":"a bowl of tuna pasta salad with celery and a creamy yogurt dressing","Turkey taco bowls":"a bowl of ground turkey, rice, black beans and salsa, steam rising","Peanut butter oats":"a bowl of peanut butter oatmeal topped with sliced banana","Lentil rice soup":"a ceramic bowl of lentil and rice soup with diced carrots, steam rising","Cottage cheese toast":"toast topped with cottage cheese, sliced tomatoes and a drizzle of olive oil","Sheet pan chicken":"a sheet pan of roasted chicken thighs with potatoes and green beans, steam rising","Burrito bowls":"a burrito bowl with chicken, rice, pinto beans and corn","Egg fried rice":"a bowl of egg fried rice with peas and soy sauce, steam rising"};
-const STEPS=['Goal to cart','Cook from home','Weekly routine','Goal math','Calorie goal'];
+const STEPS=['How it works'];
 const rand=n=>Math.floor(Math.random()*n),shuf=a=>a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
 let seen=[];try{seen=JSON.parse(localStorage.getItem('rcSeen')||'[]')}catch{}
 const hash=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return h.toString(36)};
 function mark(id){if(!seen.includes(id)){seen.push(id);try{localStorage.setItem('rcSeen',JSON.stringify(seen))}catch{}}}
-function one(pl){const P=[600,700,800,900][rand(4)],C=[1800,2000,2200,2500][rand(4)],F=shuf(FOODS).slice(0,4).join(', ');
- const meals=shuf(MEALS).slice(0,3),m=meals[0],M=m[0],G=m[2],K=m[3],I=m[1].map(x=>x[1]+' '+x[0].toLowerCase()).join(', ');
- const f=t=>t.replace(/\{P\}/g,P).replace(/\{C\}/g,C).replace(/\{F\}/g,F).replace(/\{M\}/g,M).replace(/\{G\}/g,G).replace(/\{K\}/g,K).replace(/\{I\}/g,I);
+const andJoin=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+function one(pl){
+ const meals=shuf(MEALS).slice(0,3),m=meals[0],M=m[0],k=1+rand(2),have=m[1].slice(0,4-k),need=m[1].slice(4-k);
+ const T=[15,20,25,30][rand(4)],pr=need.map(()=>+(1.5+rand(40)/10).toFixed(2)),tot=pr.reduce((a,b)=>a+b,0);
+ const nm=a=>a.map(x=>x[0].toLowerCase());
+ const V={M,T,I:nm(have).join(', '),H:andJoin(nm(have)),N:andJoin(nm(need)),X:need.length,Y:need.length===1?'item':'items',D:Math.floor(tot)+1,F:shuf(FOODS).slice(0,4).join(', ')};
+ const I=V.I,F=V.F,f=t=>t.replace(/\{([A-Z])\}/g,(a,c)=>c in V?String(V[c]):a);
  const hook=f(pl.h[rand(pl.h.length)]);const raw=pl.s.map(sl=>sl[rand(3)]),mid=raw.map(r=>r.map(f));
  const s=[[hook,'Recipe Cart'],...mid,pl.e||ENDS[rand(ENDS.length)]];
- const lay=['hook',...raw.map(r=>{const j=r.join(' ');return r[1]==='{I}'?'list':pl.p==='Protein meal'&&j.includes('{G}')&&j.includes('{K}')?'stat':STEPS.includes(pl.p)?'step':'text'}),'cta'];
+ const lay=['hook',...raw.map(r=>r[1]==='{I}'?'list':STEPS.includes(pl.p)?'step':'text'),'cta'];
  if(pl.p==='Question')lay[0]='quote';
- const look=LOOK[M]||M,mealP=pl.p==='Protein meal'||pl.p==='Question';
+ const look=LOOK[M]||M,mealP=['Kitchen to dinner','Question','Quick dinner'].includes(pl.p);
  const subj=(l,i)=>l==='cta'?null:l==='list'?`overhead flat lay of the raw ingredients for ${M} on a wooden counter: ${I}, nothing cooked yet`
-  :mealP?(l==='hook'||l==='quote'?`${look}, close up`:l==='stat'?`three glass meal prep containers of ${M} stacked on a kitchen counter`:[`${look}, on a kitchen table`,`a fork resting in ${look}`,`${look} next to a glass of water on a wooden table`][i%3])
-  :pl.p==='Same meal fatigue'?[`rows of identical meal prep containers of ${M} stacked in a fridge`,`one meal prep container of ${M} with the lid off beside a stack of lids`,`a fridge shelf packed with containers of ${M}`][i%3]
-  :[`${F} laid out on a kitchen counter next to a reusable grocery bag`,`a shopping basket holding ${F} in a grocery store aisle`,`meal prep containers filled with ${F} on a kitchen counter`][i%3];
- return{p:pl.p,hook,s,meals,lay,pr:lay.map(subj),G,K,ui:mkui(meals,P,C),id:hash(s.map(x=>x.join('~')).join('|')),cap:`${hook} ${pl.c||'Follow for weekly high protein meals.'} ${DISC} ${TAGS}`}}
-function build(){const get=n=>PL.find(p=>p.p===n),core=['Protein meal','Question','Budget problem','Protein meal'];
+  :mealP?(l==='hook'||l==='quote'?`${look}, close up`:[`${look}, on a kitchen table`,`a fork resting in ${look}`,`${look} next to a glass of water on a wooden table`][i%3])
+  :pl.p==='Variety'?[`rows of identical meal prep containers of ${M} stacked in a fridge`,`one meal prep container of ${M} with the lid off beside a stack of lids`,`a fridge shelf packed with containers of ${M}`][i%3]
+  :[`${F} laid out on a kitchen counter next to a reusable grocery bag`,`an open fridge with ${F} on the shelves, warm kitchen light`,`${F} on a kitchen counter, ready to cook`][i%3];
+ return{p:pl.p,hook,s,meals,lay,pr:lay.map(subj),G:0,K:0,ui:mkui(meals,have,need,pr,T,pl.p==='Budget'),id:hash(s.map(x=>x.join('~')).join('|')),cap:`${hook} ${pl.c||'Follow for dinner ideas from what you already have.'} ${DISC} ${TAGS}`}}
+function build(){const get=n=>PL.find(p=>p.p===n),core=['Kitchen to dinner','Question','Budget','Kitchen to dinner'];
  const rest=shuf(PL.filter(p=>!core.includes(p.p))).slice(0,3);
  return shuf([...core.map(get),...rest]).map((pl,k)=>{let o;for(let i=0;i<60;i++){o=one(pl);if(!seen.includes(o.id))break}o.dark=k%2===0;o.hs=k%3;return o})}
 // ---- Real app screenshots (saved on this device) ----
-const LAB={picker:'Food picker',meter:'Goal meter',meals:'Week of meals',plan:'Weekly plan with prices',plan2:'Weekly plan, other mode',goals:'Goal setup',path:'Choose your path',streak:'Weekly streak'};
-const SH={'Goal math':{2:'picker',3:'meter'},'Goal to cart':{1:'path',2:'picker',3:'plan'},'Budget problem':{2:'goals',3:'plan'},'Protein meal':{3:'meals'},'Same meal fatigue':{2:'meals',3:'meals'},'Calorie goal':{1:'goals',2:'picker',3:'meter'},'Cook from home':{1:'path',3:'meals'},'Weekly routine':{3:'streak'}};
+const LAB={kitchen:'Kitchen input',ideas:'Meal ideas',recipe:'Recipe with You have and You need'};
+const SH={'Kitchen to dinner':{2:'ideas',3:'recipe'},'How it works':{1:'kitchen',2:'ideas',3:'recipe'},'Budget':{3:'recipe'},'Variety':{2:'ideas'},'Quick dinner':{2:'ideas'}};
 const shotOf=(p,i)=>(SH[p]||{})[i]||null;
-const SCENE={'Goal math':'Meal prep containers with grilled chicken, rice and beans on a kitchen counter','Goal to cart':'Hand holding a phone in a grocery aisle, shelves of chicken, yogurt and eggs behind','Budget problem':'Grocery basket with chicken, eggs, yogurt and a receipt on a counter','Protein meal':'Overhead shot of a freshly cooked high protein meal bowl on a kitchen table','Question':'Overhead meal prep containers holding different high protein meals','Same meal fatigue':'Rows of identical meal prep containers stacked in a fridge','Calorie goal':'Balanced plate of rice, chicken, vegetables and a bottle of olive oil','Cook from home':'Open pantry and fridge with everyday staples, warm kitchen light','Weekly routine':'Sunday meal prep, containers lined up, calendar on the fridge'};
+const SCENE={'Kitchen to dinner':'Overhead shot of a freshly cooked dinner bowl on a kitchen table','Question':'Open fridge with everyday groceries, warm kitchen light','Budget':'Grocery basket with a few items and a receipt on a counter','How it works':'Hand holding a phone in a kitchen, groceries on the counter','Variety':'Rows of identical meal prep containers stacked in a fridge','Quick dinner':'A pan of dinner on the stove, warm evening kitchen light'};
 const ANG=['close-up','overhead flat lay','wide shot'];
 function down(file,max,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/im.width),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.75))};im.src=r.result};r.readAsDataURL(file)}
 // ---- Slide renderer: 1080x1920, text kept in TikTok safe area ----
@@ -143,38 +136,30 @@ async function genPhoto(o,i,im,a,gb,gm){gb.disabled=true;gb.textContent='Generat
 function wrap(c,t,x,y,mw,lh){const w=t.split(' ');let l='',n=0;for(const s of w){const m=l?l+' '+s:s;if(c.measureText(m).width>mw&&l){c.fillText(l,x,y+n++*lh);l=s}else l=m}c.fillText(l,x,y+n++*lh);return y+n*lh}
 function cover(c,im,x,y,w,h){const s=Math.max(w/im.width,h/im.height);c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);c.restore()}
 // ---- The app's screens, redrawn from its real layout and styles (index.html) ----
-const A={bg:'#fbf6ee',ink:'#241c12',mute:'#7a6f5c',line:'#e4d8c3',ac:'#d9631e',good:'#3f7a4b',tint:'#fdf1e7'};
-const CATS={Proteins:[['🍗','chicken breast','31g protein · 165 cal per 100g'],['🥚','eggs','6g protein · 70 cal each'],['🥩','lean ground beef','26g protein · 250 cal per 100g'],['🐟','tuna','25g protein · 116 cal per 100g'],['🫘','black beans','9g protein · 132 cal per 100g']],
- Dairy:[['🥛','Greek yogurt','10g protein · 59 cal per 100g'],['🧀','cottage cheese','11g protein · 98 cal per 100g'],['🥛','milk','3g protein · 61 cal per 100g'],['🧀','cheddar cheese','25g protein · 403 cal per 100g']],
- Carbs:[['🍚','rice','3g protein · 130 cal per 100g'],['🥣','oats','13g protein · 389 cal per 100g'],['🍝','pasta','5g protein · 131 cal per 100g'],['🍞','whole wheat bread','13g protein · 247 cal per 100g'],['🥔','potatoes','2g protein · 77 cal per 100g']],
- Fats:[['🫒','olive oil','0g protein · 884 cal per 100g'],['🥜','peanut butter','25g protein · 588 cal per 100g'],['🥑','avocado','2g protein · 160 cal per 100g'],['🌰','almonds','21g protein · 579 cal per 100g']]};
-function mkui(meals,P0,C0){const cat=shuf(Object.keys(CATS))[0],foods=shuf(CATS[cat]).slice(0,4),s=1+rand(7);
- return{cat,foods,sel:shuf([0,1,2,3]).slice(0,1+rand(2)),goal:['protein','calories','both'][rand(3)],P:P0||[600,700,800,900][rand(4)],C:C0||[1800,2000,2200,2500][rand(4)],pct:[100,100,95,86,64][rand(5)],m:meals[0],min:[15,20,25,30,35][rand(5)],home:rand(2),mode:rand(2),cost:+((P0||700)*(0.048+rand(12)/1000)).toFixed(2),sav:+(3+rand(90)/10).toFixed(2),s,w:s+rand(5)}}
+const A={bg:'#faf6ee',ink:'#251c14',mute:'#7a6f5c',line:'#e4d8c3',ac:'#db621f',good:'#3e7d4f',tint:'#fdf1e7'};
+function mkui(meals,have,need,pr,T,priced){const typed=have.length+rand(2);
+ return{m:meals[0],m2:meals[1][0],have,need,pr,tot:+pr.reduce((a,b)=>a+b,0).toFixed(2),T,T2:T+5,typed,u2:Math.min(typed,2+rand(2)),n2:rand(3),priced,extra:['garlic','onion','cheese'].slice(0,typed-have.length)}}
 function rr(c,x,y,w,h,r,f,s,lw){c.beginPath();c.roundRect(x,y,w,h,r);if(f){c.fillStyle=f;c.fill()}if(s){c.strokeStyle=s;c.lineWidth=lw||1.5;c.stroke()}}
 function tx(c,t,x,y,sz,wt,col,al){c.font=wt+' '+sz+'px '+F;c.fillStyle=col;c.textAlign=al||'left';c.fillText(t,x,y);c.textAlign='left'}
-function chips(c,L,on,y){const w=(358-(L.length-1)*6)/L.length;L.forEach((l,i)=>{const x=i*(w+6),s=i===on;rr(c,x,y,w,34,8,s?A.ink:'#fff',s?A.ink:A.line);tx(c,l,x+w/2,y+22,14,'600',s?'#fff':A.ink,'center')})}
-function tile(c,x,y,w,h,e,t,sub,on){rr(c,x,y,w,h,10,on?A.tint:'#fff',on?A.ac:A.line);tx(c,e,x+10,y+30,24,'400',A.ink);tx(c,t,x+10,y+53,14.5,'600',A.ink);c.font='400 10px '+F;c.fillStyle=A.mute;wrap(c,sub,x+10,y+68,w-20,12);if(on){rr(c,x+w-30,y+6,24,24,12,A.ac);tx(c,'✓',x+w-18,y+23,14,'700','#fff','center')}}
 function card(c,y,h){rr(c,0,y,358,h,10,'#fff',A.line,1)}
 const SCR={
- picker(c,u){let x=0;['Proteins','Dairy','Carbs','Fats'].forEach(k=>{c.font='600 14px '+F;const w=c.measureText(k).width+26+(k===u.cat?20:0);rr(c,x,0,w,36,18,k===u.cat?A.ink:'#fff',k===u.cat?A.ink:A.line);tx(c,k,x+13,23,14,'600',k===u.cat?'#fff':A.mute);if(k===u.cat){rr(c,x+w-26,9,18,18,9,A.ac);tx(c,String(u.sel.length),x+w-17,22,11,'700','#fff','center')}x+=w+6});
-  u.foods.forEach((f,i)=>tile(c,i%2*183,46+Math.floor(i/2)*92,175,84,f[0],f[1],f[2],u.sel.includes(i)))},
- meter(c,u){const p=u.sel.map(i=>u.foods[i]);tx(c,'Your picks ('+p.length+' of 8)',0,16,14,'600',A.ink);
-  p.forEach((f,i)=>{rr(c,0,26+i*40,358,34,8,'#fff',A.line);tx(c,f[0]+' '+f[1],10,48+i*40,14,'600',A.ink);rr(c,324,26+i*40,34,34,8,'#fff',A.line);tx(c,'×',341,49+i*40,16,'400',A.ink,'center')});
-  const g=u.pct>=95,t=g?['#e8f3ea',A.good]:u.pct>=70?['#fdf3d9','#8a6416']:['#fbe9e4','#a8341c'],y=26+p.length*40+10;
-  rr(c,0,y,358,g?46:76,8,t[0]);c.font='400 14px '+F;c.fillStyle=t[1];let e=wrap(c,'Your picks can reach about '+u.pct+'% of your '+(u.goal==='calories'?'calorie':'protein')+' goal.',12,y+22,334,19);if(!g)wrap(c,u.goal==='calories'?'Add a carb like rice or oats to close the gap.':'Pick another protein food to cover the rest.',12,e,334,19)},
- goals(c,u){tx(c,'My goal',0,14,14,'600',A.ink);chips(c,['Protein','Calories','Both'],['protein','calories','both'].indexOf(u.goal),22);let y=76;
-  if(u.goal!=='calories'){tx(c,'Weekly protein target (grams)',0,y+12,14,'600',A.ink);rr(c,0,y+22,358,38,8,'#fff',A.line);tx(c,String(u.P),12,y+47,16,'400',A.ink);y+=72}
-  if(u.goal!=='protein'){tx(c,'Daily calorie goal',0,y+12,14,'600',A.ink);rr(c,0,y+22,358,38,8,'#fff',A.line);tx(c,String(u.C),12,y+47,16,'400',A.ink)}},
- path(c,u){[['🛒','I am shopping at Kroger','Find the cheapest way to hit your goal and send it to your cart.'],['🏠','I am cooking from what I have','Get meal ideas sized to your goal. No store needed.']].forEach((t,i)=>tile(c,0,i*108,358,100,t[0],t[1],t[2],i===u.home))},
- meals(c,u){const m=u.m;card(c,0,226);tx(c,m[0],14,28,17,'800',A.ink);tx(c,m[1].slice(0,3).map(x=>x[0]).join(', ').toLowerCase(),14,46,12,'400',A.mute);tx(c,m[2]+'g protein from your plan foods · '+u.min+' min',14,64,12,'400',A.mute);
-  m[1].slice(0,3).forEach((x,i)=>tx(c,'•  '+x[1]+' '+x[0].toLowerCase(),18,92+i*22,14,'400',A.ink));
-  ['Recipe','Swap','Save'].forEach((l,i)=>{const w=104.6,x=14+i*(w+8);rr(c,x,160,w,40,8,'#fff',A.line);tx(c,l,x+w/2,185,15,'600',A.ink,'center')})},
- plan(c,u){const m=u.mode,v=m===0?u.cost:u.cost+u.sav;card(c,0,226);tx(c,'Your weekly plan',14,28,16,'800',A.ink);[['Cheapest',14],['Balanced',184]].forEach((b,i)=>{const on=i===m;rr(c,b[1],38,160,34,8,on?A.ink:'#fff',on?A.ink:A.line);tx(c,b[0],b[1]+80,60,14,'600',on?'#fff':A.ink,'center')});
-  tx(c,'Estimated protein',14,96,14,'700',A.ink);tx(c,u.P+'g of '+u.P+'g',344,96,14,'700',A.ink,'right');tx(c,'Estimated cost',14,118,13,'400',A.ink);tx(c,'$'+v.toFixed(2),344,118,13,'400',A.ink,'right');
-  c.font='600 12px '+F;c.fillStyle=A.good;wrap(c,m===0?'$'+u.sav.toFixed(2)+' cheaper than the Balanced plan ($'+(u.cost+u.sav).toFixed(2)+').':'Cheapest would save $'+u.sav.toFixed(2)+' by leaning on the best deals.',14,142,330,15);
-  rr(c,14,168,330,40,8,A.ink);tx(c,'Add full plan to my Kroger cart',179,193,14,'600','#fff','center')},
- plan2(c,u){SCR.plan(c,{...u,mode:1-u.mode})},
- streak(c,u){card(c,0,112);tx(c,u.s+' week streak',14,34,20,'800',A.ink);tx(c,u.w+' weeks planned',344,32,12,'400',A.mute,'right');for(let i=0;i<8;i++){c.fillStyle=i>=8-u.s?A.good:A.line;c.beginPath();c.arc(21+i*20,58,7,0,7);c.fill()}tx(c,'Plan this week to keep your streak going.',14,92,13,'400',A.mute)}};
+ kitchen(c,u){tx(c,"What's in your kitchen?",0,18,16,'800',A.ink);
+  rr(c,0,28,290,36,8,'#fff',A.line);tx(c,'chicken, rice, spinach',12,51,14,'400','#b3a58c');
+  rr(c,298,28,60,36,8,'#fff',A.line);tx(c,'Add',328,51,14,'600',A.ink,'center');
+  let x=0,y=76;[...u.have.map(a=>a[0].toLowerCase()),...u.extra].forEach(t=>{c.font='600 13px '+F;const w=c.measureText(t).width+34;if(x+w>358){x=0;y+=34}rr(c,x,y,w,28,14,A.tint,A.ac);tx(c,t,x+12,y+19,13,'600',A.ink);tx(c,'×',x+w-14,y+19,14,'400',A.mute,'center');x+=w+6});
+  y+=40;['Quick','Normal','I like to cook'].forEach((l,i)=>{const w=(358-12)/3,bx=i*(w+6),on=i===0;rr(c,bx,y,w,30,8,on?A.good:'#fff',on?A.good:A.line);tx(c,l,bx+w/2,y+20,13,'600',on?'#fff':A.ink,'center')});
+  rr(c,0,y+40,358,38,8,A.ac);tx(c,'Get ideas',179,y+64,15,'600','#fff','center')},
+ ideas(c,u){const one=(y,t,min,uses,n)=>{card(c,y,104);tx(c,t,14,y+26,16,'800',A.ink);tx(c,min+' min · Uses '+uses+' of your '+u.typed+' foods, '+(n?'needs '+n+' more':'nothing else needed'),14,y+46,11.5,'400',A.mute);
+   [['Make it',0],['Save',1]].forEach(([l,i])=>{const w=159,x=14+i*(w+8);rr(c,x,y+58,w,34,8,i===0?A.ac:'#fff',i===0?A.ac:A.line);tx(c,l,x+w/2,y+80,14,'600',i===0?'#fff':A.ink,'center')})};
+  one(0,u.m[0],u.T,u.have.length,u.need.length);one(112,u.m2,u.T2,u.u2,u.n2)},
+ recipe(c,u){card(c,0,226);tx(c,u.m[0],14,26,16,'800',A.ink);const li=x=>x[1]+' '+x[0].toLowerCase();
+  if(!u.priced){tx(c,'You have',14,50,13,'700',A.ink);u.have.forEach((x,i)=>tx(c,'•  '+li(x),18,68+i*17,12.5,'400',A.ink));
+   const y=68+u.have.length*17+10;tx(c,'You need',14,y+8,13,'700',A.ink);u.need.forEach((x,i)=>tx(c,'•  '+li(x),18,y+26+i*17,12.5,'400',A.ink));
+   rr(c,14,176,330,40,8,A.ac);tx(c,'Get Kroger prices for missing items',179,201,13.5,'600','#fff','center')}
+  else{tx(c,'You need',14,50,13,'700',A.ink);u.need.forEach((x,i)=>{const y=72+i*22;tx(c,li(x),18,y,12.5,'400',A.ink);tx(c,'$'+u.pr[i].toFixed(2),344,y,12.5,'600',A.ink,'right')});
+   const y=72+u.need.length*22+8;tx(c,'Estimated total',14,y+8,14,'700',A.ink);tx(c,'$'+u.tot.toFixed(2),344,y+8,14,'700',A.ink,'right');
+   tx(c,'Prices are live estimates from Kroger and can differ at checkout.',14,y+28,10,'400',A.mute);
+   rr(c,14,176,330,40,8,A.ac);tx(c,'Send to my Kroger cart',179,201,14,'600','#fff','center')}}};
 function drawUI(c,pn){const x=110,y=820,w=860,h=580,k=2.25;if(pn.ph){c.save();c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=50;c.shadowOffsetY=16;c.fillStyle=A.bg;c.beginPath();c.roundRect(x,y,w,h,36);c.fill();c.restore()}c.save();c.beginPath();c.roundRect(x,y,w,h,36);c.clip();c.fillStyle=A.bg;c.fillRect(x,y,w,h);c.translate(x+27,y+27);c.scale(k,k);(SCR[pn.k]||(()=>{}))(c,pn.o.ui);c.restore();c.strokeStyle=pn.ph?'#ffffff':A.ac;c.lineWidth=pn.ph?6:8;c.beginPath();c.roundRect(x,y,w,h,36);c.stroke()}
 // ---- Layouts for slides without a photo or app screen ----
 const ws=(c,t,mw)=>{let l='';const o=[];for(const x of String(t).split(' ')){const m=l?l+' '+x:x;if(c.measureText(m).width>mw&&l){o.push(l);l=x}else l=m}o.push(l);return o};
