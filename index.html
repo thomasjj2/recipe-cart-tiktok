@@ -27,7 +27,7 @@ textarea{width:100%;min-height:96px;margin-top:12px;font:inherit;font-size:16px;
 :focus-visible{outline:3px solid #f2c230;outline-offset:2px}
 </style></head><body>
 <h1>Recipe Cart TikTok maker</h1>
-<p class="sub">A week of posts for the Ideas app: dinner from what you already have, shareable meals, polls, myths, and before and after posts, each with its own slide layout, an occasional spicy hook, and a follow call to action on the last slide. Make slides, save them, post.</p>
+<p class="sub">A week of 5 to 6 slide posts: day by day dinner plans, share with a friend, budget totals, and reaction posts, each with a caption, search friendly hashtags, and a follow call to action. Make slides, save them, post.</p>
 <div class="bar"><button class="b p" id="neu">New week of ideas</button><button class="b" id="shuf">Reshuffle</button></div>
 <p class="hint" id="note">Tip: post one a day. Photos are optional, every post works with the text and app screens alone. Save the slides, upload them to TikTok as a photo post, and paste the caption.</p>
 <p class="hint" id="ver"></p><p class="hint" id="used"></p><p class="hint"><button class="b" id="clr" style="min-height:36px;flex:none;padding:0 12px">Clear history</button></p>
@@ -45,72 +45,34 @@ const wk=()=>{const d=new Date();return Math.floor(d/6048e5)};
 let seed=wk()*7+1;
 // ---- What the app knows ----
 const FOODS=["chicken","eggs","rice","pasta","potatoes","spinach","ground beef","canned beans","tortillas","cheese","onion","frozen vegetables"];
-const TAGS='#whatsinmyfridge #dinnerideas #quickdinner #cookingathome #mealideas #groceryhacks #recipecart';
+const TAGS='#mealprep #dinnerideas #budgetmeals #recipecart';
 const DISC='Prices are estimates and can differ at checkout. Not affiliated with Kroger.';
-const ENDS=[["Follow for dinner ideas from what's already in your kitchen","Free app in my bio"],["Follow so dinner never gets boring","Free app's in my bio"],["Dinner's not that deep. Follow for ideas","Try the free app in my bio"],["New dinner idea every day","Follow, then grab the app in my bio"],["You've got more in that fridge than you think","Follow, free app in my bio"]];
+const ENDS=[["Send this to someone who needs dinner tonight","Follow, free app in my bio"],["Know your total before you shop","Follow, free app in my bio"],["Share it with someone you cook for","Follow for a new idea every day"],["There's more dinner in your fridge than you think","Follow, free app in my bio"]];
 // Each post type: p=name, h=hook lines, s=3 slide slots with 3 variants each.
 // Tokens: {M} meal, {H} foods you have, {I} foods you have as a list, {N} foods to buy, {T} minutes, {X} count to buy, {D} dollars, {F} four foods
 const PL=[
-{p:'Kitchen to dinner',c:"Type what's in your kitchen, get dinner ideas. Follow for a new one every day.",h:["I had {H}. Dinner was {M}.","{M} from {H}, easy","What I made with {H}","{T} minute dinner from {H}","{H} in the fridge? Make {M}","Dinner's sorted: {M}"],
- x:["You're overthinking dinner","You're planning dinner backwards","Your fridge isn't empty, it's a dinner","Dinner's not that deep"],
- s:[[["What I had","{I}"],["In my kitchen","{I}"],["Just these foods","{I}"]],
-    [["The idea","{M}, {T} minutes"],["Dinner tonight","{M}"],["Recipe Cart came up with","{M}, {T} min"]],
-    [["It shows what's missing","Just {N} to buy"],["You have, you need","Then send it to your Kroger cart"],["Missing something?","Add it to your Kroger cart"]]]},
-{p:'Question',c:"Tell me yours in the comments and I'll turn it into dinner.",e:["Drop yours below","Follow for dinner ideas"],h:["What's in your fridge right now?","Name 3 foods you have. I'll make dinner.","What do you always have but never cook?","Be honest, what's the most boring thing in your fridge?","What do you make when nothing's planned?","Drop your leftovers. I'll plan dinner."],
- x:["Tell me your fridge. I'll judge it (nicely)","What's the sad food nobody's eating in your fridge?","Your fridge has more dinner in it than you think"],
- s:[[["Mine: {H}","Dinner: {M}"],["My fridge today","{H}"],["I've got {H}","So I made {M}"]],
-    [["What's yours?","Tell me in the comments"],["Drop 3 foods below","I read every comment"],["Your turn","List what you've got"]],
-    [["I'll pick the best ones","And turn them into dinner"],["Follow for the best answers","Dinner ideas every day"],["Save this for later","Your next dinner starts here"]]]},
-{p:'Budget',c:"Estimated Kroger prices, they can differ at checkout.",L:['text','big','text'],h:["Dinner from your fridge plus {X} {Y}","Skip the big shop. Dinner for under ${D}.","You've already got most of dinner","Only buy what's missing","Stop buying the same groceries twice","Dinner for ${D} or less, using what I had"],
- x:["You're probably buying food you already own","Stop shopping before you check your kitchen","It's not a grocery problem, it's a planning problem"],
- s:[[["You already have","{H}"],["In your kitchen already","{H}"],["Start with what you own","{H}"]],
-    [["{X}","{Y} to buy: {N}"],["Just {X}","{Y} missing: {N}"],["{X} {Y}","to buy: {N}"]],
-    [["See the price first","Then send it to your Kroger cart"],["Know the total","Before you shop"],["Missing items only","Priced for your store"]]]},
-{p:'How it works',h:["Tell it what you've got. Get dinner ideas.","Dinner ideas from your own kitchen in 3 taps","Type your fridge. Get dinner.","How I decide what to cook","Never wonder what's for dinner again","Fridge to dinner idea in 10 seconds"],
- x:["You don't need a recipe. You need this.","Meal planning's way easier than you think","Stop scrolling recipes you can't make"],
- s:[[["Type what you have","Or tap the common foods"],["List your foods","Chicken, rice, spinach"],["Start with your kitchen","Add what you've got"]],
-    [["Get ideas","Quick, easy, different every time"],["Pick a dinner idea","Each one shows what you still need"],["See what fits","Using what you already own"]],
-    [["Missing something?","Send it to your Kroger cart"],["Make it, or buy what's missing","One tap to your cart"],["Cook it or shop the rest","Your call"]]]},
-{p:'Variety',h:["Same chicken and rice, 8 different dinners","Sick of the same dinner every week?","Bored of your usual dinner?","Stop making the same 3 meals","One grocery list, a week of different dinners","Meal prep boredom has a fix"],
- x:["Meal prep isn't boring, you're just repeating yourself","You're not bad at cooking, you're stuck on 3 meals","Same dinner every week? That's a choice"],
- s:[[["Same foods every week","{H}"],["By Wednesday you're over it","Same plate again"],["The problem","Same 3 dinners on repeat"]],
-    [["Recipe Cart gives ideas","From the foods you already have"],["8 ideas at a time","Different styles every time"],["New dinner, same groceries","Tap More ideas anytime"]],
-    [["Keep the ones you like","Tap Save, find them later"],["Not feeling these?","Tap More ideas"],["Build your rotation","Save the dinners you love"]]]},
-{p:'Quick dinner',h:["{T} minute dinner from {H}","Dinner in {T} minutes, no extra shopping","Quick dinner with what you've got","Tired and hungry? Start here","Dinner in {T} minutes: {M}","A {T} minute meal from your fridge"],
- x:["You don't need an hour to cook dinner","Dinner shouldn't take longer than delivery","Stop saying you don't have time"],
- s:[[["Tired, hungry, short on time","Set cooking time to Quick"],["Set it to Quick","Under 30 minutes"],["Pick Quick","Minimal steps"]],
-    [["Today: {M}","{T} minutes"],["Dinner: {M}","About {T} minutes"],["Tonight: {M}","Ready in {T} minutes"]],
-    [["Steps in plain language","No long recipe to read"],["4 to 8 steps","Short and clear"],["Tap Make it","The recipe shows right there"]]]},
-{p:'Pantry reveal',c:"Type what's in your kitchen and get dinner ideas. Follow for one every day.",e:["Type yours in the app","Follow for dinner ideas"],h:["I had {H}. It found 3 dinners.","3 dinners from {H}","Only {H} in the kitchen","{H}. Now what?","What can you make with {H}?"],
- x:["That's not an empty fridge, that's 3 dinners","Nothing to eat is a lie","You've got more than you think"],
- L:['list','ranked'],
- s:[[["What I had","{I}"],["In my kitchen","{I}"],["Just these foods","{I}"]],
-    [["It found 3 dinners","{R}"],["3 ideas from that","{R}"],["Dinner options","{R}"]]]},
-{p:'This or that',c:"A or B? Tell me in the comments.",e:["Comment A or B","Follow for the next vote"],h:["Which dinner would you make?","{M} or {A}?","Pick one for tonight","Dinner vote: {M} or {A}"],
- x:["Be honest, {M} or {A}?","There's a right answer: {M} or {A}","You can't say both. {M} or {A}?"],
- L:['poll'],
- s:[[["Pick one","{M} | {A}"],["Tonight's vote","{M} | {A}"],["Which one wins?","{M} | {A}"]]]},
-{p:'Myth',c:"You're closer to dinner than you think. Follow for dinner ideas from what you already have.",h:["Myth: you need a big grocery trip","Dinner doesn't need a shopping trip","You're not out of food, you're out of ideas","Stop buying more groceries"],
- x:["Most grocery runs are just habit","You don't need groceries, you need a plan","Your fridge isn't empty, you just can't see it"],
- L:['myth','big'],
- s:[[["I have nothing to cook","You've got {H}. Make {M}."],["I need to go shopping first","You've got {H}. Make {M}."],["There's nothing to eat","Start with {H}. Make {M}."]],
-    [["{X}","{Y} to buy for {M}"],["Just {X}","{Y} missing for {M}: {N}"],["{T}","minutes for {M}"]]]},
-{p:'Before after',c:"Tell it what you've got and get dinner ideas. Follow for a new one every day.",h:["My fridge before and after Recipe Cart","Fridge chaos to a dinner plan","From random foods to dinner","What I used to do vs now"],
- x:["I was planning dinner wrong for years","My old dinner routine was a mess","I used to stare at the fridge. Not anymore."],
- L:['vs','text'],
- s:[[["Same fridge, new plan","Before: staring at {H} | After: {M} in {T} minutes"],["What changed","Before: ordering takeout again | After: {M} from {H}"],["Dinner decision","Before: nothing planned | After: {M} in {T} minutes"]],
-    [["Then it shows ideas","Each one tells you what you still need"],["It lists what fits","Using the foods you already have"],["Pick one and cook","Or buy what's missing"]]]},
-{p:'Macro check',c:"Protein and calorie numbers are estimates. Set a protein or calorie filter in the app. Follow for dinner ideas.",h:["How much protein is {M}?","About {G}g protein from {H}","A dinner with {G}g protein","High protein dinner from {H}"],
- x:["Stop guessing how much protein's in dinner","{G}g protein in {T} minutes. No excuses.","Your dinner could do more for you"],
- L:['stat','text'],
- s:[[["{M}",""],["{M}, per meal",""],["Tonight: {M}",""]],
-    [["Filter by protein","Min protein per meal: 20, 30 or 40 grams"],["Watching calories?","Max calories per meal: 400, 600 or 800"],["Need more protein?","Set a minimum on the Ideas tab"]]]},
-{p:'Share loop',c:"Tap Share my version on any dinner idea and send it to a friend, or add your own with Share my own meal.",e:["Send one to a friend","Follow for more dinner ideas"],h:["Send a dinner idea to a friend","Made it? Share it in one tap","Share what you cooked","Text a friend tonight's dinner","Your dinner as a shareable card"],
- x:["Quit keeping your good dinners to yourself","Your friends are eating boring dinners. Fix that.","Be the friend with the dinner plan"],
- L:['text','share'],
- s:[[["Found a good one?","Tap Share my version"],["Make a dinner idea","Then tap Share my version"],["Got your own go-to dinner?","Tap Share my own meal"]],
-    [["It turns into a card","{M}"],["Your meal becomes a card","{M}"],["A card you can send or post","{M}"]],
-    [["Friends open the link","They see the full recipe"],["One link","Ingredients and steps inside"],["They get the recipe","From the link you send"]]]}
+{p:'Dinners under',col:1,c:"Dinner ideas with a protein estimate, plus a Kroger price check in the app. Save this for the next time you're out of ideas and send it to someone who cooks.",q:"Which one would you make first?",t:"#cheapdinners #budgetmeals",e:["Save this for your next grocery trip","Send it to someone who needs dinner"],h:["Dinner ideas for under {P}","6 dinners under {P}","Dinners under {P}, saved for you"],x:["I wish I'd had this list sooner","Okay, these dinners are all under {P}"],L:['text','text','text'],
+ s:[[["Dinner 1","{M1}, about {G1}g protein"]],[["Dinner 2","{M2}, about {G2}g protein"]],[["Dinner 3","{M3}, about {G3}g protein"]]]},
+{p:'Week of dinners',week:1,c:"Four dinner ideas for your week, each with a protein estimate. Recipe Cart plans it, shows your Kroger total, and lets you send the whole thing to a friend.",q:"Which one are you making first?",t:"#weeklymealplan #highprotein",h:["4 dinner ideas for your week","A week of dinners, planned for you","Dinner for the next 4 nights, sorted","4 dinners, about {G}g protein each"],x:["Okay, this week's dinners are finally handled","I was so tired of deciding dinner, so here are four"],L:['text','text','text','text'],
+ s:[[["Monday","{M1}, about {G1}g protein"],["Mon","{M1} · {G1}g protein"]],[["Tuesday","{M2}, about {G2}g protein"],["Tue","{M2} · {G2}g protein"]],[["Wednesday","{M3}, about {G3}g protein"],["Wed","{M3} · {G3}g protein"]],[["Thursday","{M4}, about {G4}g protein"],["Thu","{M4} · {G4}g protein"]]]},
+{p:'Share loop',c:"Tap Share my version on any dinner idea and send it to a friend or family member. They get the full recipe, not just a photo.",q:"Who are you sending this to?",t:"#sharedinner #familydinner",e:["Send this to someone who needs dinner tonight","Follow, free app in my bio"],h:["Send this to whoever is cooking tonight","The dinner idea you text to your mom","Share a dinner with a friend in one tap","Dinner for the group chat, recipe included"],x:["Okay, I'm sending this to my sister right now","Every friend who asks what's for dinner needs this"],L:['text','share','text'],
+ s:[[["Found a good one?","Tap Share my version"],["Got a go to dinner?","Tap Share my own meal"],["Cooking for someone?","Tap Share my version"]],[["It turns into a card","{M}"],["Your dinner becomes a card","{M}"]],[["They open the link","And get the full recipe"],["One link, whole recipe","Ingredients and steps inside"]]]},
+{p:'Budget',c:"See your estimated Kroger total before you shop and only buy what's missing. Prices can differ at checkout.",q:"What do you usually spend on a weekly shop?",t:"#groceryonabudget #savemoney",L:['text','big','text'],h:["Know your grocery total before you shop","Dinner for ${D} or less, using what I already had","Stop overspending on groceries, here's how","Your grocery bill shouldn't be a surprise","Only buy what's missing, about ${D}"],x:["Seeing my total before I shop took so much stress off","I used to overspend every single week. Not anymore."],
+ s:[[["You already have","{H}"],["Start with what you own","{H}"]],[["{X}","{Y} to buy: {N}"],["Just {X}","{Y} missing: {N}"]],[["See the price first","Then send it to your Kroger cart"],["Know the total","Before you walk in"]]]},
+{p:'Kitchen to dinner',c:"Type what's in your kitchen and get dinner ideas. Follow for a new one every day.",q:"What would you cook with this?",t:"#whatsinmyfridge #quickdinner",h:["I had {H}. Dinner turned into {M}.","{M} from {H}, ready in {T} minutes","Got {H}? Here's dinner","Dinner from {H}, nothing extra needed"],x:["Wait, my fridge was already dinner?","I didn't know {H} could turn into {M}"],
+ s:[[["What I had","{I}"],["In my kitchen","{I}"]],[["The idea","{M}, {T} minutes"],["Dinner tonight","{M}"]],[["It shows what's missing","Just {N} to buy"],["Missing something?","Add it to your Kroger cart"]]]},
+{p:'Question',c:"Tell me in the comments and I'll turn it into dinner.",q:"What's in your fridge right now?",e:["Drop yours below","Follow for dinner ideas"],t:"#fridgechallenge #cookingathome",h:["What's in your fridge right now?","Name 3 foods you have and I'll plan dinner","What do you always buy but never cook?","What do you make when nothing is planned?"],x:["Tell me your fridge and I'll turn it into dinner","Be honest, what's been sitting in your fridge all week?"],
+ s:[[["Mine today","{H}. Dinner: {M}"],["I've got {H}","So I made {M}"]],[["What's yours?","Tell me in the comments"],["Your turn","List what you've got"]],[["I'll pick a few","And turn them into dinner"],["Send this to a friend","See what they'd make"]]]},
+{p:'Pantry reveal',c:"Type what's in your kitchen and get dinner ideas. Follow for one every day.",q:"What would you make from this?",e:["Type yours in the app","Follow for dinner ideas"],t:"#pantrymeals #whatsinmyfridge",h:["I had {H}. It found 3 dinners.","3 dinners from {H}","Only {H} in the kitchen. Now what?"],x:["That's not an empty fridge, that's 3 dinners","Okay, I really didn't expect 3 dinners from this"],L:['list','ranked','text'],
+ s:[[["What I had","{I}"],["In my kitchen","{I}"]],[["It found 3 dinners","{R}"],["3 ideas from that","{R}"]],[["Send one to a friend","Share my version, one tap"],["Pick one tonight","Buy only what's missing"]]]},
+{p:'Before after',c:"Tell it what you've got and get dinner ideas. Follow for a new one every day.",q:"Which side sounds like your week?",t:"#mealplanning #dinnerroutine",h:["My dinner plan before and after Recipe Cart","From staring at the fridge to a plan","Same groceries, a lot less stress"],x:["I used to stare at the fridge every night. Not anymore.","Dinner finally feels easy"],L:['vs','text','text'],
+ s:[[["Same fridge, new plan","Before: staring at {H} | After: {M} in {T} minutes"],["What changed","Before: ordering takeout again | After: {M} from {H}"]],[["Then it shows ideas","Each one tells you what you still need"],["It lists what fits","Using foods you already have"]],[["Know the total","Before you shop"],["Share the plan","Send it to someone you cook for"]]]},
+{p:'Macro check',c:"Protein and calorie numbers are estimates. Set a protein or calorie filter in the app. Follow for dinner ideas.",q:"What's your protein goal per meal?",t:"#highproteinmeals #proteinmealprep",h:["How much protein is in {M}?","About {G}g protein from {H}","A dinner with {G}g protein","High protein dinner from {H}"],x:["I stopped guessing how much protein is in dinner","{G}g protein and it only takes {T} minutes"],L:['stat','text','text'],
+ s:[[["{M}",""],["Tonight: {M}",""]],[["Filter by protein","Set a minimum per meal: 20, 30 or 40 grams"],["Watching calories?","Set a maximum: 400, 600 or 800"]],[["Know the price too","See your Kroger total first"],["Send it to a friend","They get the full recipe"]]]},
+{p:'Myth',c:"You're closer to dinner than you think. Follow for dinner ideas from what you already have.",q:"What's your go to dinner?",t:"#groceryhacks #cookingathome",L:['myth','big','text'],h:["Myth: you need a big grocery trip","Dinner doesn't need a shopping trip","You're not out of food, you're out of ideas"],x:["Most grocery runs are just habit, and it adds up","Your fridge isn't empty, it's full of dinner"],
+ s:[[["I have nothing to cook","You've got {H}. Make {M}."],["I need to go shopping first","Start with {H}. Make {M}."]],[["{X}","{Y} to buy for {M}"],["{T}","minutes for {M}"]],[["See the price first","Before you go to the store"],["Skip the extra trip","Only buy what's missing"]]]},
+{p:'Quick dinner',c:"Set cooking time to Quick and get a dinner with short, plain steps. Follow for dinner ideas.",q:"What's your 20 minute dinner?",t:"#quickmeals #easydinner",h:["{T} minute dinner from {H}","Tired and hungry? Start here","Dinner in {T} minutes: {M}"],x:["Okay, {T} minutes and dinner is done","Dinner shouldn't take longer than delivery"],
+ s:[[["Tired, hungry, short on time","Set cooking time to Quick"],["Pick Quick","Under 30 minutes"]],[["Today: {M}","{T} minutes"],["Tonight: {M}","Ready in {T} minutes"]],[["Steps in plain language","No long recipe to read"],["Tap Make it","The recipe shows right there"]]]}
 ];
 const MEALS=[
 ["Chicken rice bowl",[["Chicken breast","2 lb"],["Rice","2 cups"],["Broccoli","1 head"],["Soy sauce","3 tbsp"]],42,610],
@@ -136,22 +98,22 @@ function one(pl){
  let m0,k,have,need,rel;
  for(let t=0;t<40;t++){m0=shuf(MEALS)[0];k=1+rand(2);have=m0[1].slice(0,4-k);need=m0[1].slice(4-k);rel=shuf(MEALS.filter(x=>x!==m0&&x[1].some(a=>have.some(h=>h[0].toLowerCase()===a[0].toLowerCase()))));if(pl.p!=='Pantry reveal'||rel.length>=2)break}
  const oth=shuf(MEALS.filter(x=>x!==m0&&!rel.includes(x)));
- const meals=[m0,...rel,...oth].slice(0,3),m=meals[0],M=m[0];
+ const all=[m0,...rel,...oth],meals=all.slice(0,4),m=meals[0],M=m[0];
  const T=[15,20,25,30][rand(4)],pr=need.map(()=>+(1.5+rand(40)/10).toFixed(2)),tot=pr.reduce((a,b)=>a+b,0);
  const nm=a=>a.map(x=>x[0].toLowerCase());
- const V={M,T,I:nm(have).join(', '),H:andJoin(nm(have)),N:andJoin(nm(need)),X:need.length,Y:need.length===1?'item':'items',D:Math.floor(tot)+1,F:shuf(FOODS).slice(0,4).join(', '),A:meals[1][0],B:meals[2][0],R:meals.map(x=>x[0]).join(', '),G:m[2],K:m[3]};
- const I=V.I,F=V.F,f=t=>t.replace(/\{([A-Z])\}/g,(a,c)=>c in V?String(V[c]):a);
- const hp=(pl.x&&Math.random()<.25)?pl.x:pl.h,hook=f(hp[rand(hp.length)]);const raw=pl.s.map(sl=>sl[rand(3)]),mid=raw.map(r=>r.map(f));
+ const V={M,T,I:nm(have).join(', '),H:andJoin(nm(have)),N:andJoin(nm(need)),X:need.length,Y:need.length===1?'item':'items',D:Math.floor(tot)+1,F:shuf(FOODS).slice(0,4).join(', '),P:['$10','$12','$15'][rand(3)],A:meals[1][0],B:meals[2][0],R:meals.slice(0,3).map(x=>x[0]).join(', '),...Object.fromEntries(meals.flatMap((x,k)=>[['M'+(k+1),x[0]],['G'+(k+1),x[2]]])),G:m[2],K:m[3]};
+ const I=V.I,F=V.F,f=t=>t.replace(/\{([A-Z]\d?)\}/g,(a,c)=>c in V?String(V[c]):a);
+ const hp=(pl.x&&Math.random()<.35)?pl.x:pl.h,hook=f(hp[rand(hp.length)]);const raw=pl.s.map(sl=>sl[rand(sl.length)]),mid=raw.map(r=>r.map(f));
  const s=[[hook,'Recipe Cart'],...mid,pl.e||ENDS[rand(ENDS.length)]];
  const lay=['hook',...raw.map((r,j)=>(pl.L&&pl.L[j])||(r[1]==='{I}'?'list':STEPS.includes(pl.p)?'step':'text')),'cta'];
- if(pl.p==='Question')lay[0]='quote';
+ if(pl.p==='Question')lay[0]='quote';if(pl.col)lay[0]='collage';
  const look=LOOK[M]||M,mealP=['Kitchen to dinner','Question','Quick dinner','This or that','Macro check','Share loop'].includes(pl.p);
- const subj=(l,i)=>l==='cta'?null:l==='share'?`a phone propped on a kitchen counter beside ${look}, screen turned away`:l==='list'?`overhead flat lay of the raw ingredients for ${M} on a wooden counter: ${I}, nothing cooked yet`
+ const subj=(l,i)=>l==='cta'?null:l==='collage'?`six finished dinners in a 2 by 3 grid: ${all.slice(0,6).map(x=>x[0]).join(', ')} (tap Generate photo, it makes all six)`:(pl.week||pl.col)&&i>0?`overhead shot of ${LOOK[meals[i-1][0]]}, in a glass meal prep container, overhead, on a light speckled counter`:l==='share'?`a phone propped on a kitchen counter beside ${look}, screen turned away`:l==='list'?`overhead flat lay of the raw ingredients for ${M} on a wooden counter: ${I}, nothing cooked yet`
   :mealP?(l==='hook'||l==='quote'?`${look}, close up`:[`${look}, on a kitchen table`,`a fork resting in ${look}`,`${look} next to a glass of water on a wooden table`][i%3])
   :pl.p==='Variety'?[`rows of identical meal prep containers of ${M} stacked in a fridge`,`one meal prep container of ${M} with the lid off beside a stack of lids`,`a fridge shelf packed with containers of ${M}`][i%3]
   :[`${F} laid out on a kitchen counter next to a reusable grocery bag`,`an open fridge with ${F} on the shelves, warm kitchen light`,`${F} on a kitchen counter, ready to cook`][i%3];
- return{p:pl.p,hook,s,meals,lay,pr:lay.map(subj),G:m[2],K:m[3],ui:mkui(meals,have,need,pr,T,pl.p==='Budget'),id:hash(s.map(x=>x.join('~')).join('|')),cap:`${hook} ${pl.c||"Follow for dinner ideas from what's already in your kitchen."} ${DISC} ${TAGS}`}}
-function build(){const get=n=>PL.find(p=>p.p===n),core=['Kitchen to dinner','Share loop','Budget','Question'];
+ return{p:pl.p,hook,s,meals,cm:pl.col?all.slice(0,6).map(x=>x[0]):null,lay,pr:lay.map(subj),G:m[2],K:m[3],ui:mkui(meals,have,need,pr,T,pl.p==='Budget'),id:hash(s.map(x=>x.join('~')).join('|')),cap:[hook,'Ideas inside: '+V.R+'.',pl.c,pl.q||'Which one first?',DISC,TAGS+' '+(pl.t||'')].join('\n\n')}}
+function build(){const get=n=>PL.find(p=>p.p===n),core=['Week of dinners','Share loop','Budget','Dinners under'];
  const rest=shuf(PL.filter(p=>!core.includes(p.p))).slice(0,3);
  return shuf([...core.map(get),...rest]).map((pl,k)=>{let o;for(let i=0;i<60;i++){o=one(pl);if(!seen.includes(o.id))break}o.dark=k%2===0;o.hs=k%3;return o})}
 // ---- Real app screenshots (saved on this device) ----
@@ -159,11 +121,12 @@ const LAB={shared:'Shared meal link (recipe, stats, ingredients)',kitchen:'Kitch
 const SH={'Share loop':{3:'shared'},'Before after':{2:'ideas'},'Kitchen to dinner':{2:'ideas',3:'recipe'},'How it works':{1:'kitchen',2:'ideas',3:'recipe'},'Budget':{3:'recipe'},'Variety':{2:'ideas'},'Quick dinner':{2:'ideas'}};
 const shotOf=(p,i)=>(SH[p]||{})[i]||null;
 const SCENE={'Share loop':'Hand holding a phone next to a plated dinner on a kitchen counter','Pantry reveal':'Open pantry shelf with everyday foods','This or that':'Two plated dinners side by side on a wooden table','Myth':'Full fridge with everyday groceries, warm kitchen light','Before after':'Fridge with a few random foods, warm kitchen light','Macro check':'A plated high protein dinner on a kitchen table','Kitchen to dinner':'Overhead shot of a freshly cooked dinner bowl on a kitchen table','Question':'Open fridge with everyday groceries, warm kitchen light','Budget':'Grocery basket with a few items and a receipt on a counter','How it works':'Hand holding a phone in a kitchen, groceries on the counter','Variety':'Rows of identical meal prep containers stacked in a fridge','Quick dinner':'A pan of dinner on the stove, warm evening kitchen light'};
-const ANG=['close-up','overhead flat lay','wide shot'];
+const ANG=['close up, slightly overhead','overhead flat lay, one container','wide shot of the counter'];
+const STYLE="shot on a phone, bright even natural light, clean white kitchen with a light grey speckled quartz countertop, food in glass meal prep containers or a plain plate, realistic and slightly imperfect, not a studio or magazine photo, vertical 9:16, empty space in the upper third, no text, no logos, no people";
 function down(file,max,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/im.width),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.75))};im.src=r.result};r.readAsDataURL(file)}
 // ---- Slide renderer: 1080x1920, text kept in TikTok safe area ----
-const promptFor=(o,i)=>`${(o.pr&&o.pr[i])||SCENE[o.p]||'Kitchen scene'}, ${ANG[i%3]}, photorealistic, vertical 9:16, soft natural light, empty space in the upper third for text, no text, no logos`;
-async function genPhoto(o,i,im,a,gb,gm){gb.disabled=true;gb.textContent='Generating...';gm.textContent='';
+const promptFor=(o,i)=>`${(o.pr&&o.pr[i])||SCENE[o.p]||'Kitchen scene'}, ${ANG[i%3]}, ${STYLE}`;
+async function genPhoto(o,i,im,a,gb,gm){if(o.cm&&i===0)return genCol(o,i,im,a,gb,gm);gb.disabled=true;gb.textContent='Generating...';gm.textContent='';
  try{const call=()=>fetch('/.netlify/functions/gemini-image',{method:'POST',headers:{'content-type':'application/json','x-passcode':ld('rcPass','')},body:JSON.stringify({prompt:promptFor(o,i)})});
   let r=await call();
   if(r.status===401){const pw=window.prompt('Enter your maker passcode');if(!pw)throw new Error('A passcode is needed.');sv('rcPass',pw);r=await call()}
@@ -206,7 +169,20 @@ const SCR={
 function drawUI(c,pn){const x=110,y=820,w=860,h=580,k=2.25;if(pn.ph){c.save();c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=50;c.shadowOffsetY=16;c.fillStyle=A.bg;c.beginPath();c.roundRect(x,y,w,h,36);c.fill();c.restore()}c.save();c.beginPath();c.roundRect(x,y,w,h,36);c.clip();c.fillStyle=A.bg;c.fillRect(x,y,w,h);c.translate(x+27,y+27);c.scale(k,k);(SCR[pn.k]||(()=>{}))(c,pn.o.ui);c.restore();c.strokeStyle=pn.ph?'#ffffff':A.ac;c.lineWidth=pn.ph?6:8;c.beginPath();c.roundRect(x,y,w,h,36);c.stroke()}
 // ---- Layouts for slides without a photo or app screen ----
 const ws=(c,t,mw)=>{let l='';const o=[];for(const x of String(t).split(' ')){const m=l?l+' '+x:x;if(c.measureText(m).width>mw&&l){o.push(l);l=x}else l=m}o.push(l);return o};
+function drawCol(c,X,big){c.fillStyle='#000';c.fillRect(0,0,W,H);const cw=W/2,ch=420,y0=330;
+ (X.cm||[]).slice(0,6).forEach((nm,k)=>{const x=(k%2)*cw,y=y0+Math.floor(k/2)*ch,im=(X.col||[])[k];
+  if(im)cover(c,im,x,y,cw,ch);else{c.fillStyle=k%2?B.card:'#e4d8c3';c.fillRect(x,y,cw,ch);c.fillStyle=B.ink;c.font='800 52px '+F;c.textAlign='center';ws(c,nm,cw-80).slice(0,3).forEach((l,j)=>c.fillText(l,x+cw/2,y+ch/2-20+j*60));c.textAlign='left'}});
+ c.font="800 88px -apple-system,'Helvetica Neue',Arial,sans-serif";const L=ws(c,big,720),bh=L.length*104+90;c.fillStyle='#fff';c.beginPath();c.roundRect(W/2-420,960-bh/2,840,bh,44);c.fill();c.fillStyle='#111';c.textAlign='center';L.forEach((l,j)=>c.fillText(l,W/2,960-bh/2+127+j*104));c.textAlign='left'}
+async function genCol(o,i,im,a,gb,gm){gb.disabled=true;o.col=o.col||[];
+ try{for(let k=0;k<6;k++){gb.textContent='Generating '+(k+1)+' of 6...';const nm=o.cm[k],pr=`${LOOK[nm]||nm}, overhead, ${STYLE}`;
+  const call=()=>fetch('/.netlify/functions/gemini-image',{method:'POST',headers:{'content-type':'application/json','x-passcode':ld('rcPass','')},body:JSON.stringify({prompt:pr})});
+  let r=await call();if(r.status===401){const pw=window.prompt('Enter your maker passcode');if(!pw)throw new Error('A passcode is needed.');sv('rcPass',pw);r=await call()}
+  const j=await r.json().catch(()=>({}));if(!r.ok||!j.image)throw new Error(j.error||('Server said '+r.status));
+  await new Promise((ok,no)=>{const p=new Image();p.onload=()=>{o.col[k]=p;im.src=draw(o,0);a.href=im.src;ok()};p.onerror=()=>no(new Error('Bad image'));p.src=j.image})}
+  gb.textContent='Regenerate photos';gb.disabled=false;return true
+ }catch(e){gb.textContent='Generate photo';gb.disabled=false;gm.textContent='Photo failed: '+e.message+'. Generating photos only works on your Netlify site with the Gemini key added.';return false}}
 function drawLay(c,X,big,small,i,n,last,dk){
+ if(X.lay==='collage'){drawCol(c,X,big);return}
  const lay=X.lay,hs=X.hs||0,org=lay==='hook'&&hs===1,MW=W-300;
  const bg=org?B.ac:dk?B.ink:B.bg,ink=org?B.ink:dk?B.bg:B.ink,mute=org?B.ink:dk?'#cdbfa6':B.mute,rule=dk?'#4a3b2b':'#e4d8c3';
  c.fillStyle=bg;c.fillRect(0,0,W,H);
@@ -260,7 +236,14 @@ function drawLay(c,X,big,small,i,n,last,dk){
  else if(lay==='step'){c.font='800 380px '+F;c.fillStyle=B.ac;c.fillText(String(i),115,740);put([{t:big,z:90,w:800,c:ink},{t:small,z:56,w:600,c:mute,g:28}],1070)}
  else if(lay==='cta'){put([{t:big,z:big.length>24?100:130,w:800,c:ink},{t:small,z:60,w:600,c:B.ac,g:30}],740);c.fillStyle=B.ac;c.beginPath();c.roundRect(130,1090,520,150,75);c.fill();c.font='800 70px '+F;c.fillStyle='#fff';c.textAlign='center';c.fillText('Follow',390,1190);c.textAlign='left';c.font='600 50px '+F;c.fillStyle=mute;c.fillText('@tryrecipecart',130,1320)}
  else put([{t:big,z:100,w:800,c:ink},{t:small,z:58,w:600,c:mute,g:36}],850)}
+function nat(c,ph,big,small,i,X){cover(c,ph,0,0,W,H);const NF="-apple-system,'Helvetica Neue',Arial,sans-serif",lc=t=>String(t||'').toLowerCase(),mx=W-260;
+ c.textAlign='center';c.fillStyle='#fff';c.shadowColor='rgba(0,0,0,.6)';c.shadowBlur=22;c.shadowOffsetY=3;
+ if(X&&X.wk&&i>0){c.font='600 62px '+NF;c.fillText(lc(big),W/2,440);c.font='500 86px '+NF;wrap(c,lc(small),W/2,560,mx,104)}
+ else if(i===0){c.font='700 98px '+NF;wrap(c,lc(big),W/2,470,mx,118)}
+ else{c.font='700 78px '+NF;const e=wrap(c,lc(big),W/2,440,mx,96);if(small){c.font='500 56px '+NF;wrap(c,lc(small).replace(/ \| /g,', '),W/2,e+14,mx,70)}}
+ c.shadowColor='transparent';c.shadowBlur=0;c.shadowOffsetY=0;c.textAlign='left'}
 function slide(big,small,i,n,last,ph,sh,pn,dk,X){const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');if(!ph&&!pn&&X&&X.lay){drawLay(c,X,big,small,i,n,last,dk);return cv}
+ if(ph&&!pn&&!last){nat(c,ph,big,small,i,X);return cv}
  const ink=ph?'#ffffff':dk?B.bg:B.ink,mute=ph?'#eadfcb':dk?'#cdbfa6':B.mute;
  c.fillStyle=dk?B.ink:B.bg;c.fillRect(0,0,W,H);
  if(ph){cover(c,ph,0,0,W,H);const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(20,14,8,.72)');g.addColorStop(.6,'rgba(20,14,8,.5)');g.addColorStop(1,'rgba(20,14,8,.35)');c.fillStyle=g;c.fillRect(0,0,W,H)}
@@ -273,13 +256,13 @@ function slide(big,small,i,n,last,ph,sh,pn,dk,X){const cv=document.createElement
  if(first){c.fillStyle=ph?'#ffb27d':B.ac;c.font='600 54px '+F;c.fillText('Swipe',130,1300)}
  if(pn)drawUI(c,pn);else if(false){const bx=290,by=900,bw=500,bh=500,s=bw/sh.width;c.save();c.beginPath();c.roundRect(bx,by,bw,bh,36);c.clip();c.fillStyle='#fff';c.fillRect(bx,by,bw,bh);c.drawImage(sh,bx,by,bw,sh.height*s);c.restore();c.strokeStyle=B.ac;c.lineWidth=8;c.beginPath();c.roundRect(bx,by,bw,bh,36);c.stroke()}
  return cv}
-const draw=(o,i)=>{const k=shotOf(o.p,i),np=k?{k,o,ph:!!o.ph[i]}:null;return slide(o.s[i][0],o.s[i][1],i,o.s.length,i===o.s.length-1,o.ph[i]||null,null,np,o.dark,{lay:(o.lay||[])[i],hs:o.hs||0,G:o.G,K:o.K,T:o.ui&&o.ui.T,I:o.ui&&o.ui.have?o.ui.have.map(a=>a[0].toLowerCase()).join(', '):''}).toDataURL('image/png')};
+const draw=(o,i)=>{const k=shotOf(o.p,i),np=k?{k,o,ph:!!o.ph[i]}:null;return slide(o.s[i][0],o.s[i][1],i,o.s.length,i===o.s.length-1,o.ph[i]||null,null,np,o.dark,{lay:(o.lay||[])[i],wk:o.p==='Week of dinners'||o.p==='Dinners under',col:o.col,cm:o.cm,hs:o.hs||0,G:o.G,K:o.K,T:o.ui&&o.ui.T,I:o.ui&&o.ui.have?o.ui.have.map(a=>a[0].toLowerCase()).join(', '):''}).toDataURL('image/png')};
 // ---- UI ----
 let ideas=[],n=1;
 function stat(){document.getElementById('used').textContent='Posts made so far: '+seen.length+'. New sets skip these.'}
 const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 let saved=ld('rcSaved',[]);
-const strip=o=>({p:o.p,hook:o.hook,s:o.s,meals:o.meals,ui:o.ui,id:o.id,cap:o.cap,dark:o.dark,lay:o.lay,pr:o.pr,hs:o.hs,G:o.G,K:o.K});
+const strip=o=>({cm:o.cm,p:o.p,hook:o.hook,s:o.s,meals:o.meals,ui:o.ui,id:o.id,cap:o.cap,dark:o.dark,lay:o.lay,pr:o.pr,hs:o.hs,G:o.G,K:o.K});
 function addCard(L,o,tag,mode){o.ph=o.ph||[];const d=document.createElement('div');d.className='card';
  d.innerHTML='<div class="tag"></div><div class="hook"></div><div class="two"><button class="b p mk">Make slides</button><button class="b sec"></button></div>';
  d.querySelector('.tag').textContent=tag;d.querySelector('.hook').textContent=o.hook;
@@ -295,11 +278,12 @@ function make(d,o){mark(o.id);stat();const go=()=>{const g=document.createElemen
    const a=document.createElement('a');a.textContent='Save '+(i+1);a.href=im.src;a.download='rc-'+(i+1)+'.png';
    const pb=document.createElement('label');pb.className='ph';pb.innerHTML='Add photo<input type="file" accept="image/*" hidden>';
    pb.querySelector('input').onchange=e=>{const f=e.target.files[0];if(!f)return;down(f,1080,u=>{const p=new Image();p.onload=()=>{o.ph[i]=p;im.src=draw(o,i);a.href=im.src};p.src=u})};
+   if(o.cm&&i===0){const inp=pb.querySelector('input');inp.multiple=true;pb.firstChild.textContent='Add up to 6 photos';inp.onchange=e=>{o.col=o.col||[];[...e.target.files].slice(0,6).forEach((f,k)=>down(f,700,u=>{const p=new Image();p.onload=()=>{o.col[k]=p;im.src=draw(o,0);a.href=im.src};p.src=u}))}}
    const gb=document.createElement('button');gb.type='button';gb.className='ph gen';gb.textContent='Generate photo';gb.style.cssText='background:none;border:0;width:100%;padding:6px 0;min-height:36px';
    if(i<o.s.length-1)gb.onclick=()=>genPhoto(o,i,im,a,gb,gm);else gb.hidden=true;gens.push(gb);
    w.append(im,a,pb,gb);g.append(w)});
   const pr=o.s.map((s,i)=>{const k=shotOf(o.p,i);if(i===o.s.length-1)return null;
-   return k?`Slide ${i+1}: shows the ${LAB[k]} screen (drawn for you, no photo needed)`:`Slide ${i+1}: ${(o.pr&&o.pr[i])||SCENE[o.p]||'Kitchen scene'}, ${ANG[i%3]}, photorealistic, vertical 9:16, soft natural light, empty space in the upper third for text, no text, no logos`}).filter(Boolean).join('\n\n');
+   return k?`Slide ${i+1}: shows the ${LAB[k]} screen (drawn for you, no photo needed)`:`Slide ${i+1}: ${(o.pr&&o.pr[i])||SCENE[o.p]||'Kitchen scene'}, ${ANG[i%3]}, ${STYLE}`}).filter(Boolean).join('\n\n');
   const t1=document.createElement('textarea');t1.value=pr;t1.setAttribute('aria-label','Image prompts');
   const t=document.createElement('textarea');t.value=o.cap;t.setAttribute('aria-label','Caption');
   const cp=document.createElement('button');cp.className='b';cp.style.cssText='width:100%;margin-top:8px';cp.textContent='Copy caption';
@@ -310,10 +294,10 @@ function make(d,o){mark(o.id);stat();const go=()=>{const g=document.createElemen
   d.append(g,ga,gm,h,t1,t,cp)};
  Promise.all([document.fonts.load("800 100px 'Bricolage Grotesque'"),document.fonts.load("600 50px 'Bricolage Grotesque'")]).then(go,go)}
 function ver(){document.getElementById('ver').textContent='Set '+n+' of ideas. Tap New week for a different set.'}
-function gen(){ideas=build();render();stat();ver();sv('rcSet3',{ideas:ideas.map(strip),n});window.scrollTo({top:0,behavior:'smooth'})}
+function gen(){ideas=build();render();stat();ver();sv('rcSet4',{ideas:ideas.map(strip),n});window.scrollTo({top:0,behavior:'smooth'})}
 document.getElementById('neu').onclick=()=>{n++;gen()};
 document.getElementById('shuf').onclick=()=>{n++;gen()};
 document.getElementById('clr').onclick=()=>{seen=[];try{localStorage.removeItem('rcSeen')}catch{}stat()};
-const prev=ld('rcSet3',null);if(prev&&prev.ideas&&prev.ideas.length&&prev.ideas.every(o=>'lay' in o&&PL.some(p=>p.p===o.p))){ideas=prev.ideas;n=prev.n||1;render();stat();ver()}else gen();
+const prev=ld('rcSet4',null);if(prev&&prev.ideas&&prev.ideas.length&&prev.ideas.every(o=>'lay' in o&&PL.some(p=>p.p===o.p))){ideas=prev.ideas;n=prev.n||1;render();stat();ver()}else gen();
 renderSaved();
 </script></body></html>
