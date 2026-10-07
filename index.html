@@ -27,7 +27,7 @@ textarea{width:100%;min-height:96px;margin-top:12px;font:inherit;font-size:16px;
 :focus-visible{outline:3px solid #f2c230;outline-offset:2px}
 </style></head><body>
 <h1>Recipe Cart TikTok maker</h1>
-<p class="sub">A week of photo posts for the Ideas app: dinner from what you already have, a question post, and a follow call to action on the last slide. Make slides, save them, post.</p>
+<p class="sub">A week of posts for the Ideas app: dinner from what you already have, shareable meals, polls, myths, and before and after posts, each with its own slide layout and a follow call to action on the last slide. Make slides, save them, post.</p>
 <div class="bar"><button class="b p" id="neu">New week of ideas</button><button class="b" id="shuf">Reshuffle</button></div>
 <p class="hint" id="note">Tip: post one a day. Photos are optional, every post works with the text and app screens alone. Save the slides, upload them to TikTok as a photo post, and paste the caption.</p>
 <p class="hint" id="ver"></p><p class="hint" id="used"></p><p class="hint"><button class="b" id="clr" style="min-height:36px;flex:none;padding:0 12px">Clear history</button></p>
@@ -59,9 +59,9 @@ const PL=[
  s:[[["Mine: {H}","Dinner: {M}"],["My fridge today","{H}"],["I have {H}","So I made {M}"]],
     [["What is yours?","Tell me in the comments"],["Drop 3 foods below","I read every comment"],["Your turn","List what you have"]],
     [["I will pick the best ones","And turn them into dinner"],["Follow for the best answers","Dinner ideas every day"],["Save this for later","Your next dinner starts here"]]]},
-{p:'Budget',c:'Estimated prices from Kroger, they can differ at checkout.',h:["Dinner from your fridge plus {X} {Y}","Skip the big shop. Dinner for under ${D}.","You already have most of dinner","Only buy what is missing","Stop buying the same groceries twice","Dinner for ${D} or less, using what I had"],
+{p:'Budget',c:'Estimated prices from Kroger, they can differ at checkout.',L:['text','big','text'],h:["Dinner from your fridge plus {X} {Y}","Skip the big shop. Dinner for under ${D}.","You already have most of dinner","Only buy what is missing","Stop buying the same groceries twice","Dinner for ${D} or less, using what I had"],
  s:[[["You already have","{H}"],["In your kitchen already","{H}"],["Start with what you own","{H}"]],
-    [["Only {X} {Y} to buy","{N}"],["The missing part","{N}"],["Buy just this","{N}"]],
+    [["{X}","{Y} to buy: {N}"],["Just {X}","{Y} missing: {N}"],["{X} {Y}","to buy: {N}"]],
     [["See the price first","Then send it to your Kroger cart"],["Know the total","Before you shop"],["Missing items only","Priced for your store"]]]},
 {p:'How it works',h:["Tell it what you have. Get dinner ideas.","Dinner ideas from your own kitchen in 3 taps","Type your fridge. Get dinner.","How I decide what to cook","Never wonder what is for dinner again","From fridge to dinner idea in 10 seconds"],
  s:[[["Type what you have","Or tap the common foods"],["List your foods","Chicken, rice, spinach"],["Start with your kitchen","Add what you have"]],
@@ -75,6 +75,30 @@ const PL=[
  s:[[["Tired, hungry, short on time","Set cooking time to Quick"],["Set it to Quick","Under 30 minutes"],["Pick Quick","Minimal steps"]],
     [["Today: {M}","{T} minutes"],["Dinner: {M}","About {T} minutes"],["Tonight: {M}","Ready in {T} minutes"]],
     [["Steps in plain language","No long recipe to read"],["4 to 8 steps","Short and clear"],["Tap Make it","The recipe shows right there"]]]},
+{p:'Pantry reveal',c:'Type what is in your kitchen and get dinner ideas. Follow for one every day.',e:["Type yours in the app","Follow for dinner ideas"],h:["I had {H}. It found 3 dinners.","3 dinners from {H}","Only {H} in the kitchen","{H}. Now what?","What can you make with {H}?"],
+ L:['list','ranked'],
+ s:[[["What I had","{I}"],["In my kitchen","{I}"],["Only these foods","{I}"]],
+    [["It found 3 dinners","{R}"],["3 ideas from that","{R}"],["Dinner options","{R}"]]]},
+{p:'This or that',c:'A or B? Tell me in the comments.',e:["Comment A or B","Follow for the next vote"],h:["Which dinner would you make?","{M} or {A}?","Pick one for tonight","Dinner vote: {M} or {A}"],
+ L:['poll'],
+ s:[[["Pick one","{M} | {A}"],["Tonight's vote","{M} | {A}"],["Which one wins?","{M} | {A}"]]]},
+{p:'Myth',c:'You are closer to dinner than you think. Follow for dinner ideas from what you already have.',h:["Myth: you need a big grocery trip","Dinner does not need a shopping trip","You are not out of food, you are out of ideas","Stop buying more groceries"],
+ L:['myth','big'],
+ s:[[["I have nothing to cook","You have {H}. Make {M}."],["I need to go shopping first","You have {H}. Make {M}."],["There is nothing to eat","Start with {H}. Make {M}."]],
+    [["{X}","{Y} to buy for {M}"],["Just {X}","{Y} missing for {M}: {N}"],["{T}","minutes for {M}"]]]},
+{p:'Before after',c:'Tell it what you have and get dinner ideas. Follow for one every day.',h:["My fridge before and after Recipe Cart","Fridge chaos to a dinner plan","From random foods to dinner","What I used to do vs now"],
+ L:['vs','text'],
+ s:[[["Same fridge, new plan","Before: staring at {H} | After: {M} in {T} minutes"],["What changed","Before: ordering takeout again | After: {M} from {H}"],["Dinner decision","Before: nothing planned | After: {M} in {T} minutes"]],
+    [["Then it shows ideas","Each one tells you what you still need"],["It lists what fits","Using the foods you already have"],["Pick one and cook","Or buy what is missing"]]]},
+{p:'Macro check',c:'Protein and calorie numbers are estimates. Set a protein or calorie filter in the app. Follow for dinner ideas.',h:["How much protein is {M}?","About {G}g protein from {H}","A dinner with {G}g protein","High protein dinner from {H}"],
+ L:['stat','text'],
+ s:[[["{M}",""],["{M}, per meal",""],["Tonight: {M}",""]],
+    [["Filter by protein","Min protein per meal: 20, 30 or 40 grams"],["Watching calories?","Max calories per meal: 400, 600 or 800"],["Need more protein?","Set a minimum on the Ideas tab"]]]},
+{p:'Share loop',c:'Tap Share my version on any dinner idea and send it to a friend, or add your own with Share my own meal.',e:["Send one to a friend","Follow for more dinner ideas"],h:["Send a dinner idea to a friend","Made it? Share it in one tap","Share what you cooked","Text a friend tonight's dinner","Your dinner as a shareable card"],
+ L:['text','share'],
+ s:[[["Found a good one?","Tap Share my version"],["Make a dinner idea","Then tap Share my version"],["Got your own go-to dinner?","Tap Share my own meal"]],
+    [["It turns into a card","{M}"],["Your meal becomes a card","{M}"],["A card you can send or post","{M}"]],
+    [["Friends open the link","They see the full recipe"],["One link","Ingredients and steps inside"],["They get the recipe","From the link you send"]]]},
 ];
 const MEALS=[
 ["Chicken rice bowl",[["Chicken breast","2 lb"],["Rice","2 cups"],["Broccoli","1 head"],["Soy sauce","3 tbsp"]],42,610],
@@ -97,29 +121,32 @@ const hash=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return h
 function mark(id){if(!seen.includes(id)){seen.push(id);try{localStorage.setItem('rcSeen',JSON.stringify(seen))}catch{}}}
 const andJoin=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
 function one(pl){
- const meals=shuf(MEALS).slice(0,3),m=meals[0],M=m[0],k=1+rand(2),have=m[1].slice(0,4-k),need=m[1].slice(4-k);
+ let m0,k,have,need,rel;
+ for(let t=0;t<40;t++){m0=shuf(MEALS)[0];k=1+rand(2);have=m0[1].slice(0,4-k);need=m0[1].slice(4-k);rel=shuf(MEALS.filter(x=>x!==m0&&x[1].some(a=>have.some(h=>h[0].toLowerCase()===a[0].toLowerCase()))));if(pl.p!=='Pantry reveal'||rel.length>=2)break}
+ const oth=shuf(MEALS.filter(x=>x!==m0&&!rel.includes(x)));
+ const meals=[m0,...rel,...oth].slice(0,3),m=meals[0],M=m[0];
  const T=[15,20,25,30][rand(4)],pr=need.map(()=>+(1.5+rand(40)/10).toFixed(2)),tot=pr.reduce((a,b)=>a+b,0);
  const nm=a=>a.map(x=>x[0].toLowerCase());
- const V={M,T,I:nm(have).join(', '),H:andJoin(nm(have)),N:andJoin(nm(need)),X:need.length,Y:need.length===1?'item':'items',D:Math.floor(tot)+1,F:shuf(FOODS).slice(0,4).join(', ')};
+ const V={M,T,I:nm(have).join(', '),H:andJoin(nm(have)),N:andJoin(nm(need)),X:need.length,Y:need.length===1?'item':'items',D:Math.floor(tot)+1,F:shuf(FOODS).slice(0,4).join(', '),A:meals[1][0],B:meals[2][0],R:meals.map(x=>x[0]).join(', '),G:m[2],K:m[3]};
  const I=V.I,F=V.F,f=t=>t.replace(/\{([A-Z])\}/g,(a,c)=>c in V?String(V[c]):a);
  const hook=f(pl.h[rand(pl.h.length)]);const raw=pl.s.map(sl=>sl[rand(3)]),mid=raw.map(r=>r.map(f));
  const s=[[hook,'Recipe Cart'],...mid,pl.e||ENDS[rand(ENDS.length)]];
- const lay=['hook',...raw.map(r=>r[1]==='{I}'?'list':STEPS.includes(pl.p)?'step':'text'),'cta'];
+ const lay=['hook',...raw.map((r,j)=>(pl.L&&pl.L[j])||(r[1]==='{I}'?'list':STEPS.includes(pl.p)?'step':'text')),'cta'];
  if(pl.p==='Question')lay[0]='quote';
- const look=LOOK[M]||M,mealP=['Kitchen to dinner','Question','Quick dinner'].includes(pl.p);
- const subj=(l,i)=>l==='cta'?null:l==='list'?`overhead flat lay of the raw ingredients for ${M} on a wooden counter: ${I}, nothing cooked yet`
+ const look=LOOK[M]||M,mealP=['Kitchen to dinner','Question','Quick dinner','This or that','Macro check','Share loop'].includes(pl.p);
+ const subj=(l,i)=>l==='cta'?null:l==='share'?`a phone propped on a kitchen counter beside ${look}, screen turned away`:l==='list'?`overhead flat lay of the raw ingredients for ${M} on a wooden counter: ${I}, nothing cooked yet`
   :mealP?(l==='hook'||l==='quote'?`${look}, close up`:[`${look}, on a kitchen table`,`a fork resting in ${look}`,`${look} next to a glass of water on a wooden table`][i%3])
   :pl.p==='Variety'?[`rows of identical meal prep containers of ${M} stacked in a fridge`,`one meal prep container of ${M} with the lid off beside a stack of lids`,`a fridge shelf packed with containers of ${M}`][i%3]
   :[`${F} laid out on a kitchen counter next to a reusable grocery bag`,`an open fridge with ${F} on the shelves, warm kitchen light`,`${F} on a kitchen counter, ready to cook`][i%3];
- return{p:pl.p,hook,s,meals,lay,pr:lay.map(subj),G:0,K:0,ui:mkui(meals,have,need,pr,T,pl.p==='Budget'),id:hash(s.map(x=>x.join('~')).join('|')),cap:`${hook} ${pl.c||'Follow for dinner ideas from what you already have.'} ${DISC} ${TAGS}`}}
-function build(){const get=n=>PL.find(p=>p.p===n),core=['Kitchen to dinner','Question','Budget','Kitchen to dinner'];
+ return{p:pl.p,hook,s,meals,lay,pr:lay.map(subj),G:m[2],K:m[3],ui:mkui(meals,have,need,pr,T,pl.p==='Budget'),id:hash(s.map(x=>x.join('~')).join('|')),cap:`${hook} ${pl.c||'Follow for dinner ideas from what you already have.'} ${DISC} ${TAGS}`}}
+function build(){const get=n=>PL.find(p=>p.p===n),core=['Kitchen to dinner','Share loop','Budget','Question'];
  const rest=shuf(PL.filter(p=>!core.includes(p.p))).slice(0,3);
  return shuf([...core.map(get),...rest]).map((pl,k)=>{let o;for(let i=0;i<60;i++){o=one(pl);if(!seen.includes(o.id))break}o.dark=k%2===0;o.hs=k%3;return o})}
 // ---- Real app screenshots (saved on this device) ----
-const LAB={kitchen:'Kitchen input',ideas:'Meal ideas',recipe:'Recipe with You have and You need'};
-const SH={'Kitchen to dinner':{2:'ideas',3:'recipe'},'How it works':{1:'kitchen',2:'ideas',3:'recipe'},'Budget':{3:'recipe'},'Variety':{2:'ideas'},'Quick dinner':{2:'ideas'}};
+const LAB={shared:'Shared meal link (recipe, stats, ingredients)',kitchen:'Kitchen input',ideas:'Meal ideas',recipe:'Recipe with You have and You need'};
+const SH={'Share loop':{3:'shared'},'Before after':{2:'ideas'},'Kitchen to dinner':{2:'ideas',3:'recipe'},'How it works':{1:'kitchen',2:'ideas',3:'recipe'},'Budget':{3:'recipe'},'Variety':{2:'ideas'},'Quick dinner':{2:'ideas'}};
 const shotOf=(p,i)=>(SH[p]||{})[i]||null;
-const SCENE={'Kitchen to dinner':'Overhead shot of a freshly cooked dinner bowl on a kitchen table','Question':'Open fridge with everyday groceries, warm kitchen light','Budget':'Grocery basket with a few items and a receipt on a counter','How it works':'Hand holding a phone in a kitchen, groceries on the counter','Variety':'Rows of identical meal prep containers stacked in a fridge','Quick dinner':'A pan of dinner on the stove, warm evening kitchen light'};
+const SCENE={'Share loop':'Hand holding a phone next to a plated dinner on a kitchen counter','Pantry reveal':'Open pantry shelf with everyday foods','This or that':'Two plated dinners side by side on a wooden table','Myth':'Full fridge with everyday groceries, warm kitchen light','Before after':'Fridge with a few random foods, warm kitchen light','Macro check':'A plated high protein dinner on a kitchen table','Kitchen to dinner':'Overhead shot of a freshly cooked dinner bowl on a kitchen table','Question':'Open fridge with everyday groceries, warm kitchen light','Budget':'Grocery basket with a few items and a receipt on a counter','How it works':'Hand holding a phone in a kitchen, groceries on the counter','Variety':'Rows of identical meal prep containers stacked in a fridge','Quick dinner':'A pan of dinner on the stove, warm evening kitchen light'};
 const ANG=['close-up','overhead flat lay','wide shot'];
 function down(file,max,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/im.width),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.75))};im.src=r.result};r.readAsDataURL(file)}
 // ---- Slide renderer: 1080x1920, text kept in TikTok safe area ----
@@ -159,7 +186,11 @@ const SCR={
   else{tx(c,'You need',14,50,13,'700',A.ink);u.need.forEach((x,i)=>{const y=72+i*22;tx(c,li(x),18,y,12.5,'400',A.ink);tx(c,'$'+u.pr[i].toFixed(2),344,y,12.5,'600',A.ink,'right')});
    const y=72+u.need.length*22+8;tx(c,'Estimated total',14,y+8,14,'700',A.ink);tx(c,'$'+u.tot.toFixed(2),344,y+8,14,'700',A.ink,'right');
    tx(c,'Prices are live estimates from Kroger and can differ at checkout.',14,y+28,10,'400',A.mute);
-   rr(c,14,176,330,40,8,A.ac);tx(c,'Send to my Kroger cart',179,201,14,'600','#fff','center')}}};
+   rr(c,14,176,330,40,8,A.ac);tx(c,'Send to my Kroger cart',179,201,14,'600','#fff','center')}},
+ shared(c,u){card(c,0,226);tx(c,'Shared with Recipe Cart',14,22,11,'400',A.mute);tx(c,u.m[0],14,46,16,'800',A.ink);
+  tx(c,u.T+' min · ≈'+u.m[2]+'g protein · ≈'+u.m[3]+' cal',14,64,11.5,'400',A.mute);
+  tx(c,'Ingredients',14,88,13,'700',A.ink);u.m[1].slice(0,4).forEach((x,i)=>tx(c,'•  '+x[1]+' '+x[0].toLowerCase(),18,106+i*17,12.5,'400',A.ink));
+  rr(c,14,182,330,36,8,A.ac);tx(c,'Add my foods',179,205,14,'600','#fff','center')}};
 function drawUI(c,pn){const x=110,y=820,w=860,h=580,k=2.25;if(pn.ph){c.save();c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=50;c.shadowOffsetY=16;c.fillStyle=A.bg;c.beginPath();c.roundRect(x,y,w,h,36);c.fill();c.restore()}c.save();c.beginPath();c.roundRect(x,y,w,h,36);c.clip();c.fillStyle=A.bg;c.fillRect(x,y,w,h);c.translate(x+27,y+27);c.scale(k,k);(SCR[pn.k]||(()=>{}))(c,pn.o.ui);c.restore();c.strokeStyle=pn.ph?'#ffffff':A.ac;c.lineWidth=pn.ph?6:8;c.beginPath();c.roundRect(x,y,w,h,36);c.stroke()}
 // ---- Layouts for slides without a photo or app screen ----
 const ws=(c,t,mw)=>{let l='';const o=[];for(const x of String(t).split(' ')){const m=l?l+' '+x:x;if(c.measureText(m).width>mw&&l){o.push(l);l=x}else l=m}o.push(l);return o};
@@ -177,8 +208,43 @@ function drawLay(c,X,big,small,i,n,last,dk){
  else if(lay==='list'){put([{t:big,z:80,w:800,c:ink}],440);const it=String(small).split(', ');it.forEach((t,k)=>{const y=620+k*150;c.strokeStyle=rule;c.lineWidth=3;c.beginPath();c.moveTo(130,y+110);c.lineTo(W-130,y+110);c.stroke();
    c.fillStyle=B.ac;c.beginPath();c.arc(160,y+50,28,0,7);c.fill();c.strokeStyle='#fff';c.lineWidth=7;c.lineCap='round';c.beginPath();c.moveTo(147,y+51);c.lineTo(157,y+62);c.lineTo(175,y+38);c.stroke();
    let z=56;c.font='600 '+z+'px '+F;while(c.measureText(t).width>720&&z>34){z-=2;c.font='600 '+z+'px '+F}c.fillStyle=ink;c.fillText(t,225,y+68)})}
- else if(lay==='stat'){c.font='600 50px '+F;c.fillStyle=mute;c.fillText('Estimates per meal',130,420);
+ else if(lay==='stat'){c.font='600 50px '+F;c.fillStyle=mute;c.fillText('Estimates per meal',130,400);let sz=72;c.font='800 '+sz+'px '+F;while(c.measureText(big).width>MW&&sz>40){sz-=4;c.font='800 '+sz+'px '+F}c.fillStyle=ink;c.fillText(big,130,490);
   [[X.G+'g','protein',800],[X.K,'calories',1200]].forEach(r=>{c.font='800 300px '+F;c.fillStyle=B.ac;c.fillText(r[0],120,r[2]);c.font='600 64px '+F;c.fillStyle=ink;c.fillText(r[1],130,r[2]+90)})}
+ else if(lay==='vs'){put([{t:big,z:64,w:800,c:ink}],410);
+  String(small).split(' | ').slice(0,2).forEach((s,k)=>{const y=540+k*410,m=s.match(/^([^:]{1,24}):\s*(.*)$/),lb=m?m[1]:'',bd=m?m[2]:s;
+   c.fillStyle=k?B.ac:(dk?'#4a3b2b':'#e4d8c3');c.beginPath();c.roundRect(110,y,860,350,32);c.fill();
+   c.font='600 46px '+F;c.fillStyle=k?'#fff':mute;c.fillText(lb,150,y+80);
+   c.font='800 60px '+F;c.fillStyle=k?'#fff':ink;ws(c,bd,780).slice(0,3).forEach((l,j)=>c.fillText(l,150,y+(lb?160:110)+j*72))});
+  c.fillStyle=B.ac;c.beginPath();c.moveTo(505,897);c.lineTo(575,897);c.lineTo(540,941);c.closePath();c.fill()}
+ else if(lay==='poll'){put([{t:big,z:84,w:800,c:ink}],480);
+  String(small).split(' | ').slice(0,2).forEach((s,k)=>{const y=660+k*310;
+   c.fillStyle=dk?'#4a3b2b':'#fff';c.beginPath();c.roundRect(110,y,860,270,40);c.fill();c.strokeStyle=B.ac;c.lineWidth=8;c.stroke();
+   c.fillStyle=B.ac;c.beginPath();c.arc(210,y+135,60,0,7);c.fill();c.font='800 76px '+F;c.fillStyle='#fff';c.textAlign='center';c.fillText(k?'B':'A',210,y+162);c.textAlign='left';
+   let z=64;c.font='800 '+z+'px '+F;let L=ws(c,s,620);while(L.length>2&&z>40){z-=4;c.font='800 '+z+'px '+F;L=ws(c,s,620)}
+   const nl=Math.min(L.length,2);c.fillStyle=dk?B.bg:B.ink;L.slice(0,2).forEach((l,j)=>c.fillText(l,300,y+135+z*.35-(nl-1)*z*.55+j*z*1.1))});
+  c.font='600 50px '+F;c.fillStyle=mute;c.fillText('Comment A or B',130,1360)}
+ else if(lay==='ranked'){put([{t:big,z:76,w:800,c:ink}],440);
+  String(small).split(', ').slice(0,3).forEach((t,k)=>{const y=620+k*250;
+   c.font='800 190px '+F;c.fillStyle=B.ac;c.fillText(String(k+1),130,y+170);
+   let z=64;c.font='800 '+z+'px '+F;while(c.measureText(t).width>600&&z>38){z-=2;c.font='800 '+z+'px '+F}
+   c.fillStyle=ink;c.fillText(t,300,y+130);
+   c.strokeStyle=rule;c.lineWidth=3;c.beginPath();c.moveTo(130,y+215);c.lineTo(W-130,y+215);c.stroke()})}
+ else if(lay==='myth'){c.font='800 54px '+F;c.fillStyle=B.ac;c.fillText('Myth',130,420);
+  c.font='800 80px '+F;ws(c,big,MW).slice(0,3).forEach((l,k)=>{const y=530+k*96;c.fillStyle=mute;c.fillText(l,130,y);c.fillRect(130,y-26,c.measureText(l).width,8)});
+  c.strokeStyle=rule;c.lineWidth=3;c.beginPath();c.moveTo(130,830);c.lineTo(W-130,830);c.stroke();
+  c.font='800 54px '+F;c.fillStyle=dk?'#8fcf9f':'#3e7d4f';c.fillText('Truth',130,930);
+  c.font='800 72px '+F;c.fillStyle=ink;ws(c,String(small),MW).slice(0,5).forEach((l,k)=>c.fillText(l,130,1030+k*86))}
+ else if(lay==='big'){let z=420;c.font='800 '+z+'px '+F;while(c.measureText(big).width>MW&&z>110){z-=20;c.font='800 '+z+'px '+F}
+  const by=560+z*.45;c.fillStyle=B.ac;c.fillText(big,120,by);put([{t:small,z:72,w:800,c:ink}],by+260)}
+ else if(lay==='share'){put([{t:big,z:76,w:800,c:ink}],440);
+  const x=190,y=600,w=700,h=720;c.save();c.shadowColor='rgba(0,0,0,.28)';c.shadowBlur=44;c.shadowOffsetY=14;c.fillStyle='#fff';c.beginPath();c.roundRect(x,y,w,h,36);c.fill();c.restore();
+  c.fillStyle=B.ac;c.beginPath();c.roundRect(x,y,w,290,[36,36,0,0]);c.fill();
+  c.fillStyle='#fbe3cf';c.beginPath();c.arc(x+w/2,y+145,104,0,7);c.fill();c.fillStyle=B.ac;c.beginPath();c.arc(x+w/2,y+145,66,0,7);c.fill();
+  c.font='800 58px '+F;c.fillStyle=B.ink;const tl=ws(c,String(small),w-80).slice(0,2);tl.forEach((l,k)=>c.fillText(l,x+40,y+370+k*66));
+  let yy=y+370+tl.length*66+10;c.font='600 38px '+F;c.fillStyle=B.mute;
+  const st=[X.T?X.T+' min':'',X.G?'≈'+X.G+'g protein':'',X.K?'≈'+X.K+' cal':''].filter(Boolean).join(' · ');if(st){c.font='600 34px '+F;const sl=ws(c,st,w-80).slice(0,2);sl.forEach((l,k)=>c.fillText(l,x+40,yy+30+k*44));yy+=sl.length*44+12}
+  c.font='400 38px '+F;ws(c,X.I||'',w-80).slice(0,2).forEach((l,k)=>c.fillText(l,x+40,yy+36+k*48));
+  c.font='600 34px '+F;c.fillStyle=B.ac;c.fillText('Shared with Recipe Cart',x+40,y+h-40)}
  else if(lay==='step'){c.font='800 380px '+F;c.fillStyle=B.ac;c.fillText(String(i),115,740);put([{t:big,z:90,w:800,c:ink},{t:small,z:56,w:600,c:mute,g:28}],1070)}
  else if(lay==='cta'){put([{t:big,z:big.length>24?100:130,w:800,c:ink},{t:small,z:60,w:600,c:B.ac,g:30}],740);c.fillStyle=B.ac;c.beginPath();c.roundRect(130,1090,520,150,75);c.fill();c.font='800 70px '+F;c.fillStyle='#fff';c.textAlign='center';c.fillText('Follow',390,1190);c.textAlign='left';c.font='600 50px '+F;c.fillStyle=mute;c.fillText('@tryrecipecart',130,1320)}
  else put([{t:big,z:100,w:800,c:ink},{t:small,z:58,w:600,c:mute,g:36}],850)}
@@ -191,11 +257,11 @@ function slide(big,small,i,n,last,ph,sh,pn,dk,X){const cv=document.createElement
  c.textAlign='right';c.fillText(i+1+' / '+n,W-110,230);c.textAlign='left';
  const box=sh||pn,first=i===0,sz=box?76:first?(big.length>48?96:112):last?(big.length>24?100:130):100;c.fillStyle=ink;c.font='800 '+sz+'px '+F;
  const e=wrap(c,big,130,box?440:first?520:480,W-300,sz*1.1);
- if(small&&!first){c.fillStyle=last?B.ac:mute;c.font='600 '+(box?46:58)+'px '+F;wrap(c,small,130,e+(box?16:30),W-300,box?58:76)}
+ if(small&&!first){c.fillStyle=last?B.ac:mute;c.font='600 '+(box?46:58)+'px '+F;wrap(c,String(small).replace(/ \| /g,' · '),130,e+(box?16:30),W-300,box?58:76)}
  if(first){c.fillStyle=ph?'#ffb27d':B.ac;c.font='600 54px '+F;c.fillText('Swipe',130,1300)}
  if(pn)drawUI(c,pn);else if(false){const bx=290,by=900,bw=500,bh=500,s=bw/sh.width;c.save();c.beginPath();c.roundRect(bx,by,bw,bh,36);c.clip();c.fillStyle='#fff';c.fillRect(bx,by,bw,bh);c.drawImage(sh,bx,by,bw,sh.height*s);c.restore();c.strokeStyle=B.ac;c.lineWidth=8;c.beginPath();c.roundRect(bx,by,bw,bh,36);c.stroke()}
  return cv}
-const draw=(o,i)=>{const k=shotOf(o.p,i),np=k?{k,o,ph:!!o.ph[i]}:null;return slide(o.s[i][0],o.s[i][1],i,o.s.length,i===o.s.length-1,o.ph[i]||null,null,np,o.dark,{lay:(o.lay||[])[i],hs:o.hs||0,G:o.G,K:o.K}).toDataURL('image/png')};
+const draw=(o,i)=>{const k=shotOf(o.p,i),np=k?{k,o,ph:!!o.ph[i]}:null;return slide(o.s[i][0],o.s[i][1],i,o.s.length,i===o.s.length-1,o.ph[i]||null,null,np,o.dark,{lay:(o.lay||[])[i],hs:o.hs||0,G:o.G,K:o.K,T:o.ui&&o.ui.T,I:o.ui&&o.ui.have?o.ui.have.map(a=>a[0].toLowerCase()).join(', '):''}).toDataURL('image/png')};
 // ---- UI ----
 let ideas=[],n=1;
 function stat(){document.getElementById('used').textContent='Posts made so far: '+seen.length+'. New sets skip these.'}
@@ -232,10 +298,10 @@ function make(d,o){mark(o.id);stat();const go=()=>{const g=document.createElemen
   d.append(g,ga,gm,h,t1,t,cp)};
  Promise.all([document.fonts.load("800 100px 'Bricolage Grotesque'"),document.fonts.load("600 50px 'Bricolage Grotesque'")]).then(go,go)}
 function ver(){document.getElementById('ver').textContent='Set '+n+' of ideas. Tap New week for a different set.'}
-function gen(){ideas=build();render();stat();ver();sv('rcSet',{ideas:ideas.map(strip),n});window.scrollTo({top:0,behavior:'smooth'})}
+function gen(){ideas=build();render();stat();ver();sv('rcSet2',{ideas:ideas.map(strip),n});window.scrollTo({top:0,behavior:'smooth'})}
 document.getElementById('neu').onclick=()=>{n++;gen()};
 document.getElementById('shuf').onclick=()=>{n++;gen()};
 document.getElementById('clr').onclick=()=>{seen=[];try{localStorage.removeItem('rcSeen')}catch{}stat()};
-const prev=ld('rcSet',null);if(prev&&prev.ideas&&prev.ideas.length&&prev.ideas.every(o=>'lay' in o&&PL.some(p=>p.p===o.p))){ideas=prev.ideas;n=prev.n||1;render();stat();ver()}else gen();
+const prev=ld('rcSet2',null);if(prev&&prev.ideas&&prev.ideas.length&&prev.ideas.every(o=>'lay' in o&&PL.some(p=>p.p===o.p))){ideas=prev.ideas;n=prev.n||1;render();stat();ver()}else gen();
 renderSaved();
 </script></body></html>
