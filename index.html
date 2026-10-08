@@ -55,7 +55,11 @@ const wk=()=>{const d=new Date();return Math.floor(d/6048e5)};
 let seed=wk()*7+1;
 // ---- What the app knows ----
 const FOODS=["chicken","eggs","rice","pasta","potatoes","spinach","ground beef","canned beans","tortillas","cheese","onion","frozen vegetables"];
-const TAGS='#mealprep #dinnerideas #budgetmeals #recipecart';
+// Max 5 hashtags per post: 2 always on + 3 picked by post type (from top performing competitor posts).
+const TAG_ALWAYS='#EasyRecipes #DinnerIdeas';
+const TAG_SETS={pantry:'#easymeals #lazymeals #budgetmeals',budget:'#budgetmeals #cheapmeals #lazymeals',protein:'#highprotein #mealprep #mealprepideas'};
+const TAG_OF={'Fridge states':'budget','Cost check':'budget','Filters':'protein'};
+const tagsFor=pl=>TAG_ALWAYS+' '+TAG_SETS[TAG_OF[pl.p]||'pantry'];
 const DISC='Prices are estimates and can differ at checkout. Not affiliated with Kroger.';
 
 let REALTXT='';try{REALTXT=localStorage.getItem('rcReal')||''}catch{}
@@ -104,7 +108,7 @@ const POS={},SPICY={};
 PL.forEach(p=>{p.sp=SPICY[p.p]||null;p.h=[...p.h,...(POS[p.p]||[])]});
 function tagl(c,sr){const w=c.measureText('Recipe Cart').width;c.save();c.font='600 28px '+F;c.textAlign='left';c.fillText('\u00b7 '+(sr||'dinner from your kitchen'),110+w+16,230);c.restore()}
 function capOf(hook,V,pl,s){const k=/kroger|price|total/i.test(s.flat().join(' ')+' '+pl.c);
- return [hook+' \ud83c\udf73',pl.sv||'',"Never eat the same thing twice. Tell us what's in your kitchen, get a new meal idea, and only buy what's missing. Free: tryrecipecart.com",'Ideas inside: '+V.R+'.',pl.q||'Which one first?',TAGS+' '+(pl.t||''),k?'Estimates only. Not affiliated with Kroger.':''].filter(Boolean).join('\n\n')}
+ return [hook+' \ud83c\udf73',pl.sv||'',"Never eat the same thing twice. Tell us what's in your kitchen, get a new meal idea, and only buy what's missing. Free: tryrecipecart.com",'Ideas inside: '+V.R+'.',pl.q||'Which one first?',tagsFor(pl),k?'Estimates only. Not affiliated with Kroger.':''].filter(Boolean).join('\n\n')}
 const rand=n=>Math.floor(Math.random()*n),shuf=a=>a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
 let seen=[];try{seen=JSON.parse(localStorage.getItem('rcSeen')||'[]')}catch{}
 const hash=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return h.toString(36)};
