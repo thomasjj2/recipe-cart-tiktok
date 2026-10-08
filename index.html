@@ -142,8 +142,8 @@ function one(pl){
  const s=[[hook,'Recipe Cart'],...mid,[M,'rcard'],cta];
  const lay=['hook',...raw.map((r,j)=>(pl.L&&pl.L[j])||(r[1]==='{I}'?'list':STEPS.includes(pl.p)?'step':'text')),'rcard','cta'];
  if(pl.p==='Question')lay[0]='quote';if(FXT.includes(pl.p)&&fx)lay[1]='text';if(pl.col)lay[0]='collage';
- const look=LOOK[M]||M,mealP=['Kitchen to dinner','Question','Quick dinner','This or that','Macro check','Share loop'].includes(pl.p);
- const subj=(l,i)=>l==='cta'||l==='rcard'?null:l==='collage'?`six finished dinners in a 2 by 3 grid: ${all.slice(0,6).map(x=>x[0]).join(', ')} (tap Generate photo, it makes all six)`:(pl.week||pl.col)&&i>0?`overhead shot of ${LOOK[meals[i-1][0]]}, in a glass meal prep container, overhead, on a light speckled counter`:l==='share'?`a phone propped on a kitchen counter beside ${look}, screen turned away`:l==='list'?`overhead flat lay of the raw ingredients for ${M} on a wooden counter: ${I}, nothing cooked yet`
+ const look=LOOK[M]||M,mealP=true;
+ const subj=(l,i)=>l==='cta'||l==='rcard'?null:l==='collage'?`six finished dinners in a 2 by 3 grid: ${all.slice(0,6).map(x=>x[0]).join(', ')} (tap Generate photo, it makes all six)`:(pl.week||pl.col)&&i>0?`overhead shot of ${LOOK[meals[i-1][0]]}, freshly served, overhead, on a light speckled counter`:l==='share'?`a phone propped on a kitchen counter beside ${look}, screen turned away`:l==='list'?`overhead flat lay of the raw ingredients for ${M} on a wooden counter: ${I}, nothing cooked yet`
   :mealP?(l==='hook'||l==='quote'?`${look}, close up`:[`${look}, on a kitchen table`,`a fork resting in ${look}`,`${look} next to a glass of water on a wooden table`][i%3])
   :pl.p==='Variety'?[`rows of identical meal prep containers of ${M} stacked in a fridge`,`one meal prep container of ${M} with the lid off beside a stack of lids`,`a fridge shelf packed with containers of ${M}`][i%3]
   :[`${F} laid out on a kitchen counter next to a reusable grocery bag`,`an open fridge with ${F} on the shelves, warm kitchen light`,`${F} on a kitchen counter, ready to cook`][i%3];
@@ -156,11 +156,12 @@ const LAB={shared:'Shared meal link (recipe, stats, ingredients)',kitchen:'Kitch
 const SH={'Share loop':{3:'shared'},'Before after':{2:'ideas'},'Kitchen to dinner':{2:'ideas'},'How it works':{1:'kitchen',2:'ideas',3:'recipe'},'Budget':{1:'kitchen'},'Variety':{2:'ideas'},'Quick dinner':{2:'ideas'}};
 const shotOf=(o,i)=>(o.sh||SH[o.p]||{})[i]||null;
 const SCENE={'Share loop':'Hand holding a phone next to a plated dinner on a kitchen counter','Pantry reveal':'Open pantry shelf with everyday foods','This or that':'Two plated dinners side by side on a wooden table','Myth':'Full fridge with everyday groceries, warm kitchen light','Before after':'Fridge with a few random foods, warm kitchen light','Macro check':'A plated high protein dinner on a kitchen table','Kitchen to dinner':'Overhead shot of a freshly cooked dinner bowl on a kitchen table','Question':'Open fridge with everyday groceries, warm kitchen light','Budget':'Grocery basket with a few items and a receipt on a counter','How it works':'Hand holding a phone in a kitchen, groceries on the counter','Variety':'Rows of identical meal prep containers stacked in a fridge','Quick dinner':'A pan of dinner on the stove, warm evening kitchen light'};
-const ANG=['close up, slightly overhead','overhead flat lay, one container','wide shot of the counter'];
-const STYLE="shot on a phone, bright even natural light, clean white kitchen with a light grey speckled quartz countertop, food in glass meal prep containers or a plain plate, realistic and slightly imperfect, not a studio or magazine photo, vertical 9:16, empty space in the upper third, no text, no logos, no people";
+const ANG=['close up, slightly overhead','overhead shot, one plated serving','three-quarter angle with the food in the foreground'];
+const STYLE="shot on a phone in a warm kitchen, soft natural window light with gentle highlights on the food, shallow depth of field with the food in sharp focus, the food looks fresh, vibrant and mouth-watering: if cooked it is hot and steaming with glistening sauce, juicy textures and golden seared edges, generous portion, served on a plain ceramic plate or bowl, realistic and slightly imperfect, not a studio or magazine photo, no plastic containers, nothing cold or dry-looking, vertical 9:16, empty space in the upper third, no text, no logos, no people";
 function down(file,max,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/im.width),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.75))};im.src=r.result};r.readAsDataURL(file)}
 // ---- Slide renderer: 1080x1920, text kept in TikTok safe area ----
-const promptFor=(o,i)=>`${(o.pr&&o.pr[i])||SCENE[o.p]||'Kitchen scene'}, ${ANG[i%3]}, ${STYLE}`;
+const subjOf=(o,i)=>(o.pr&&o.pr[i])||(o.meals&&o.meals[0]&&LOOK[o.meals[0][0]])||SCENE[o.p]||'Kitchen scene';
+const promptFor=(o,i)=>`${subjOf(o,i)}, ${ANG[i%3]}, ${STYLE}`;
 async function genPhoto(o,i,im,a,gb,gm){if(o.cm&&i===0)return genCol(o,i,im,a,gb,gm);gb.disabled=true;gb.textContent='Generating...';gm.textContent='';
  try{const call=()=>fetch('/.netlify/functions/gemini-image',{method:'POST',headers:{'content-type':'application/json','x-passcode':ld('rcPass','')},body:JSON.stringify({prompt:promptFor(o,i)})});
   let r=await call();
@@ -334,7 +335,7 @@ function make(d,o){mark(o.id);stat();const go=()=>{const g=document.createElemen
    if(i<o.s.length-1&&(o.lay||[])[i]!=='rcard')gb.onclick=()=>genPhoto(o,i,im,a,gb,gm);else{gb.hidden=true;if((o.lay||[])[i]==='rcard')pb.hidden=true}gens.push(gb);
    w.append(im,a,pb,gb);g.append(w)});
   const pr=o.s.map((s,i)=>{const k=shotOf(o,i);if(i===o.s.length-1||(o.lay||[])[i]==='rcard')return null;
-   return k?`Slide ${i+1}: shows the ${LAB[k]} screen (drawn for you, no photo needed)`:`Slide ${i+1}: ${(o.pr&&o.pr[i])||SCENE[o.p]||'Kitchen scene'}, ${ANG[i%3]}, ${STYLE}`}).filter(Boolean).join('\n\n');
+   return k?`Slide ${i+1}: shows the ${LAB[k]} screen (drawn for you, no photo needed)`:`Slide ${i+1}: ${subjOf(o,i)}, ${ANG[i%3]}, ${STYLE}`}).filter(Boolean).join('\n\n');
   const t1=document.createElement('textarea');t1.value=pr;t1.setAttribute('aria-label','Image prompts');
   const t=document.createElement('textarea');t.value=o.cap;t.setAttribute('aria-label','Caption');
   const cp=document.createElement('button');cp.className='b';cp.style.cssText='width:100%;margin-top:8px';cp.textContent='Copy caption';
